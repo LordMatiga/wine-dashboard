@@ -64,8 +64,8 @@ export default function OrderHistory({ orderId }) {
                 transcription: 'Retranscription',
                 status: 'Statut'
               }
-              const avant = value['avant'] ?? '—'
-              const apres = value['après'] ?? '—'
+              const avant = value['before'] ?? '—'
+              const apres = value['after'] ?? '—'
               return (
                 <div key={field} className="text-sm mt-1">
                   <span className="font-medium text-zinc-600">{labels[field] || field} : </span>
