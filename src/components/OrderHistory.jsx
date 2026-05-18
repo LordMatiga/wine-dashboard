@@ -57,17 +57,22 @@ export default function OrderHistory({ orderId }) {
         <li key={entry.id} className="py-3">
           <p className="text-xs text-zinc-400 mb-1.5">{formatDate(entry.created_at)}</p>
           <div className="space-y-1">
-            {Object.entries(entry.changes ?? {}).map(([field, change]) => {
-              const label = FIELD_LABELS[field] ?? field
-              const before = change?.before ?? '—'
-              const after = change?.after ?? '—'
+            {Object.entries(entry.changes).map(([field, value]) => {
+              const labels = {
+                client_name: 'Client',
+                supplier_name: 'Fournisseur',
+                transcription: 'Retranscription',
+                status: 'Statut'
+              }
+              const avant = value['avant'] ?? '—'
+              const apres = value['après'] ?? '—'
               return (
-                <p key={field} className="text-sm">
-                  <span className="font-medium text-zinc-600">{label} : </span>
-                  <span className="text-zinc-400 line-through">{before}</span>
-                  {' → '}
-                  <span className="text-zinc-800">{after}</span>
-                </p>
+                <div key={field} className="text-sm mt-1">
+                  <span className="font-medium text-zinc-600">{labels[field] || field} : </span>
+                  <span className="line-through text-zinc-400">{avant}</span>
+                  <span className="text-zinc-400 mx-1">→</span>
+                  <span className="text-zinc-800">{apres}</span>
+                </div>
               )
             })}
           </div>
