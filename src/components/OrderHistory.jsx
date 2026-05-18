@@ -22,7 +22,7 @@ export default function OrderHistory({ orderId }) {
   const [error, setError] = useState(null)
 
   useEffect(() => {
-    const fetch = async () => {
+    const loadHistory = async () => {
       const { data, error } = await supabase
         .from('order_history')
         .select('*')
@@ -36,7 +36,7 @@ export default function OrderHistory({ orderId }) {
       }
       setLoading(false)
     }
-    fetch()
+    loadHistory()
   }, [orderId])
 
   if (loading) {
