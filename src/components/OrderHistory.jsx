@@ -19,27 +19,32 @@ function formatDate(dateStr) {
 export default function OrderHistory({ orderId }) {
   const [history, setHistory] = useState([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
-    supabase
-      .from('order_history')
-      .select('*')
-      .eq('order_id', orderId)
-      .order('created_at', { ascending: false })
-      .then(({ data }) => {
+    const fetch = async () => {
+      const { data, error } = await supabase
+        .from('order_history')
+        .select('*')
+        .eq('order_id', orderId)
+        .order('created_at', { ascending: false })
+
+      if (error) {
+        setError(error.message)
+      } else {
         setHistory(data ?? [])
-        setLoading(false)
-      })
+      }
+      setLoading(false)
+    }
+    fetch()
   }, [orderId])
 
   if (loading) {
-    return (
-      <div className="py-4 space-y-3">
-        {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="animate-pulse h-10 bg-zinc-100 rounded-lg" />
-        ))}
-      </div>
-    )
+    return <p className="text-xs text-zinc-400 text-center py-4">Chargement...</p>
+  }
+
+  if (error) {
+    return <p className="text-xs text-red-400 text-center py-4">Erreur : {error}</p>
   }
 
   if (history.length === 0) {
