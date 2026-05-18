@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import AutocompleteInput from './AutocompleteInput.jsx'
+import OrderHistory from './OrderHistory.jsx'
 
 const STATUSES = ['En attente', 'Traitée', 'Erreur IA']
 
@@ -17,6 +18,7 @@ export default function EditModal({ order, onSave, onClose }) {
     status: order.status ?? 'En attente',
   })
   const [saving, setSaving] = useState(false)
+  const [showHistory, setShowHistory] = useState(false)
 
   function set(key, value) {
     setForm(prev => ({ ...prev, [key]: value }))
@@ -43,81 +45,97 @@ export default function EditModal({ order, onSave, onClose }) {
             <h2 className="text-base font-semibold text-zinc-800">Modifier la commande</h2>
             <p className="text-xs text-zinc-500 font-mono mt-0.5">{order.id?.slice(0, 8)}…</p>
           </div>
-          <button
-            onClick={onClose}
-            className="w-8 h-8 flex items-center justify-center rounded-lg text-zinc-500 hover:bg-zinc-200 hover:text-zinc-600 transition-colors"
-          >
-            ✕
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setShowHistory(h => !h)}
+              className="text-xs text-zinc-500 hover:text-zinc-800 underline cursor-pointer bg-transparent border-none p-0"
+            >
+              {showHistory ? '← Retour' : 'Historique'}
+            </button>
+            <button
+              onClick={onClose}
+              className="w-8 h-8 flex items-center justify-center rounded-lg text-zinc-500 hover:bg-zinc-200 hover:text-zinc-600 transition-colors"
+            >
+              ✕
+            </button>
+          </div>
         </div>
 
         {/* Body */}
-        <div className="px-5 py-4 space-y-4">
-          <div>
-            <label className="block text-xs font-medium text-zinc-700 mb-1">Client</label>
-            <input
-              type="text"
-              value={form.client_name}
-              onChange={e => set('client_name', e.target.value)}
-              className="w-full px-3 py-2 text-sm rounded-lg border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-[#2d4a6b]/20 focus:border-[#2d4a6b]"
-            />
-          </div>
+        <div className="px-5 py-4">
+          {showHistory ? (
+            <OrderHistory orderId={order.id} />
+          ) : (
+            <div className="space-y-4">
+              <div>
+                <label className="block text-xs font-medium text-zinc-700 mb-1">Client</label>
+                <input
+                  type="text"
+                  value={form.client_name}
+                  onChange={e => set('client_name', e.target.value)}
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-[#2d4a6b]/20 focus:border-[#2d4a6b]"
+                />
+              </div>
 
-          <div>
-            <label className="block text-xs font-medium text-zinc-700 mb-1">Fournisseur</label>
-            <AutocompleteInput
-              value={form.supplier_name}
-              onChange={val => setForm(f => ({ ...f, supplier_name: val }))}
-              placeholder="Fournisseur..."
-            />
-          </div>
+              <div>
+                <label className="block text-xs font-medium text-zinc-700 mb-1">Fournisseur</label>
+                <AutocompleteInput
+                  value={form.supplier_name}
+                  onChange={val => setForm(f => ({ ...f, supplier_name: val }))}
+                  placeholder="Fournisseur..."
+                />
+              </div>
 
-          <div>
-            <label className="block text-xs font-medium text-zinc-700 mb-1">Retranscription</label>
-            <textarea
-              rows={4}
-              value={form.transcription}
-              onChange={e => set('transcription', e.target.value)}
-              className="w-full px-3 py-2 text-sm rounded-lg border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-[#2d4a6b]/20 focus:border-[#2d4a6b] resize-none"
-            />
-          </div>
+              <div>
+                <label className="block text-xs font-medium text-zinc-700 mb-1">Retranscription</label>
+                <textarea
+                  rows={4}
+                  value={form.transcription}
+                  onChange={e => set('transcription', e.target.value)}
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-[#2d4a6b]/20 focus:border-[#2d4a6b] resize-none"
+                />
+              </div>
 
-          <div>
-            <label className="block text-xs font-medium text-zinc-700 mb-2">Statut</label>
-            <div className="flex gap-2">
-              {STATUSES.map(s => (
-                <button
-                  key={s}
-                  onClick={() => set('status', s)}
-                  className={`flex-1 py-1.5 px-2 rounded-lg text-xs font-medium border transition-colors ${
-                    form.status === s
-                      ? STATUS_ACTIVE[s]
-                      : 'bg-zinc-100 text-zinc-500 border-zinc-200 hover:bg-zinc-200'
-                  }`}
-                >
-                  {s}
-                </button>
-              ))}
+              <div>
+                <label className="block text-xs font-medium text-zinc-700 mb-2">Statut</label>
+                <div className="flex gap-2">
+                  {STATUSES.map(s => (
+                    <button
+                      key={s}
+                      onClick={() => set('status', s)}
+                      className={`flex-1 py-1.5 px-2 rounded-lg text-xs font-medium border transition-colors ${
+                        form.status === s
+                          ? STATUS_ACTIVE[s]
+                          : 'bg-zinc-100 text-zinc-500 border-zinc-200 hover:bg-zinc-200'
+                      }`}
+                    >
+                      {s}
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
-        {/* Footer */}
-        <div className="flex items-center justify-end gap-3 px-5 py-4 border-t border-zinc-200">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 rounded-lg text-sm font-medium border border-zinc-200 text-zinc-600 hover:bg-zinc-100 transition-colors"
-          >
-            Annuler
-          </button>
-          <button
-            onClick={handleSave}
-            disabled={saving}
-            className={`px-4 py-2 rounded-lg text-sm font-medium text-white bg-[#2d4a6b] hover:bg-[#1e3349] transition-colors ${saving ? 'opacity-60 cursor-not-allowed' : ''}`}
-          >
-            {saving ? 'Enregistrement…' : 'Enregistrer'}
-          </button>
-        </div>
+        {/* Footer — visible uniquement en mode formulaire */}
+        {!showHistory && (
+          <div className="flex items-center justify-end gap-3 px-5 py-4 border-t border-zinc-200">
+            <button
+              onClick={onClose}
+              className="px-4 py-2 rounded-lg text-sm font-medium border border-zinc-200 text-zinc-600 hover:bg-zinc-100 transition-colors"
+            >
+              Annuler
+            </button>
+            <button
+              onClick={handleSave}
+              disabled={saving}
+              className={`px-4 py-2 rounded-lg text-sm font-medium text-white bg-[#2d4a6b] hover:bg-[#1e3349] transition-colors ${saving ? 'opacity-60 cursor-not-allowed' : ''}`}
+            >
+              {saving ? 'Enregistrement…' : 'Enregistrer'}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   )
