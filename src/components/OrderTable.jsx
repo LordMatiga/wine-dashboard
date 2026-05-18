@@ -28,9 +28,8 @@ export default function OrderTable({ orders, loading, onEdit }) {
         <div className="col-span-2">Date</div>
         <div className="col-span-2">Client</div>
         <div className="col-span-2">Fournisseur</div>
-        <div className="col-span-3">Retranscription</div>
+        <div className="col-span-4">Retranscription</div>
         <div className="col-span-2">Statut</div>
-        <div className="col-span-1" />
       </div>
 
       {loading ? (
@@ -42,26 +41,22 @@ export default function OrderTable({ orders, loading, onEdit }) {
         </div>
       ) : (
         orders.map(order => (
-          <div key={order.id} className="border-b border-slate-100 last:border-0">
+          <div
+            key={order.id}
+            onClick={() => onEdit(order)}
+            className="border-b border-slate-100 last:border-0 cursor-pointer"
+          >
             {/* Desktop row */}
             <div className="hidden sm:grid grid-cols-12 gap-2 px-4 py-3 items-center hover:bg-slate-50/70 transition-colors">
               <div className="col-span-2 text-xs text-slate-500">{formatDate(order.created_at)}</div>
               <div className="col-span-2 text-sm font-medium text-slate-800 truncate">{order.client_name ?? '—'}</div>
               <div className="col-span-2 text-sm text-slate-600 truncate">{order.supplier_name ?? '—'}</div>
-              <div className="col-span-3 text-xs text-slate-500 line-clamp-2">{order.transcription ?? '—'}</div>
+              <div className="col-span-4 text-xs text-slate-500 line-clamp-2">{order.transcription ?? '—'}</div>
               <div className="col-span-2"><StatusBadge status={order.status} /></div>
-              <div className="col-span-1 flex justify-end">
-                <button
-                  onClick={() => onEdit(order)}
-                  className="text-xs px-2.5 py-1 rounded-lg border border-slate-200 text-slate-600 hover:bg-red-50 hover:text-wine-700 hover:border-wine-700/30 transition-colors"
-                >
-                  Modifier
-                </button>
-              </div>
             </div>
 
             {/* Mobile card */}
-            <div className="sm:hidden px-4 py-3">
+            <div className="sm:hidden px-4 py-3 hover:bg-slate-50/70 transition-colors">
               <div className="flex items-start justify-between mb-1.5">
                 <div>
                   <p className="text-sm font-medium text-slate-800">{order.client_name ?? '—'}</p>
@@ -72,15 +67,7 @@ export default function OrderTable({ orders, loading, onEdit }) {
               {order.transcription && (
                 <p className="text-xs text-slate-500 line-clamp-2 mb-2">{order.transcription}</p>
               )}
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-slate-400">{formatDate(order.created_at)}</span>
-                <button
-                  onClick={() => onEdit(order)}
-                  className="text-xs px-2.5 py-1 rounded-lg border border-slate-200 text-slate-600 hover:bg-red-50 hover:text-wine-700 transition-colors"
-                >
-                  Modifier
-                </button>
-              </div>
+              <span className="text-xs text-slate-400">{formatDate(order.created_at)}</span>
             </div>
           </div>
         ))

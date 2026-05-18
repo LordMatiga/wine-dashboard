@@ -69,7 +69,6 @@ export default function App() {
     <div className="min-h-screen bg-slate-50">
       <Header />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-5">
-        <StatsBar orders={orders} />
         <SearchFilters
           search={search}
           onSearch={setSearch}
@@ -91,6 +90,8 @@ export default function App() {
             {search || statusFilter !== 'Tous' ? ` sur ${orders.length}` : ''}
           </p>
         )}
+
+        <StatsBar orders={orders} />
       </main>
 
       {editingOrder && (

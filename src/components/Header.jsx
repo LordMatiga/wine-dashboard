@@ -7,7 +7,7 @@ export default function Header() {
             🍷
           </div>
           <div>
-            <p className="text-sm font-bold text-slate-900 leading-tight">GRUN Falco &amp; Compagnie</p>
+            <p className="text-sm font-bold text-slate-900 leading-tight">Grün Falcot &amp; Co</p>
             <p className="text-xs text-slate-500 leading-tight">Suivi des commandes</p>
           </div>
         </div>
