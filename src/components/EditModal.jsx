@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import AutocompleteInput from './AutocompleteInput.jsx'
 
 const STATUSES = ['En attente', 'Traitée', 'Erreur IA']
 
@@ -32,19 +33,19 @@ export default function EditModal({ order, onSave, onClose }) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-900/50 backdrop-blur-sm"
       onClick={e => { if (e.target === e.currentTarget) onClose() }}
     >
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+      <div className="bg-zinc-50 rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-zinc-200">
           <div>
-            <h2 className="text-base font-semibold text-slate-900">Modifier la commande</h2>
-            <p className="text-xs text-slate-400 font-mono mt-0.5">{order.id?.slice(0, 8)}…</p>
+            <h2 className="text-base font-semibold text-zinc-800">Modifier la commande</h2>
+            <p className="text-xs text-zinc-500 font-mono mt-0.5">{order.id?.slice(0, 8)}…</p>
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors"
+            className="w-8 h-8 flex items-center justify-center rounded-lg text-zinc-500 hover:bg-zinc-200 hover:text-zinc-600 transition-colors"
           >
             ✕
           </button>
@@ -53,37 +54,36 @@ export default function EditModal({ order, onSave, onClose }) {
         {/* Body */}
         <div className="px-5 py-4 space-y-4">
           <div>
-            <label className="block text-xs font-medium text-slate-700 mb-1">Client</label>
+            <label className="block text-xs font-medium text-zinc-700 mb-1">Client</label>
             <input
               type="text"
               value={form.client_name}
               onChange={e => set('client_name', e.target.value)}
-              className="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-wine-700/20 focus:border-wine-700"
+              className="w-full px-3 py-2 text-sm rounded-lg border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-[#2d4a6b]/20 focus:border-[#2d4a6b]"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-700 mb-1">Fournisseur</label>
-            <input
-              type="text"
+            <label className="block text-xs font-medium text-zinc-700 mb-1">Fournisseur</label>
+            <AutocompleteInput
               value={form.supplier_name}
-              onChange={e => set('supplier_name', e.target.value)}
-              className="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-wine-700/20 focus:border-wine-700"
+              onChange={val => setForm(f => ({ ...f, supplier_name: val }))}
+              placeholder="Fournisseur..."
             />
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-700 mb-1">Retranscription</label>
+            <label className="block text-xs font-medium text-zinc-700 mb-1">Retranscription</label>
             <textarea
               rows={4}
               value={form.transcription}
               onChange={e => set('transcription', e.target.value)}
-              className="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-wine-700/20 focus:border-wine-700 resize-none"
+              className="w-full px-3 py-2 text-sm rounded-lg border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-[#2d4a6b]/20 focus:border-[#2d4a6b] resize-none"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-700 mb-2">Statut</label>
+            <label className="block text-xs font-medium text-zinc-700 mb-2">Statut</label>
             <div className="flex gap-2">
               {STATUSES.map(s => (
                 <button
@@ -92,7 +92,7 @@ export default function EditModal({ order, onSave, onClose }) {
                   className={`flex-1 py-1.5 px-2 rounded-lg text-xs font-medium border transition-colors ${
                     form.status === s
                       ? STATUS_ACTIVE[s]
-                      : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100'
+                      : 'bg-zinc-100 text-zinc-500 border-zinc-200 hover:bg-zinc-200'
                   }`}
                 >
                   {s}
@@ -103,17 +103,17 @@ export default function EditModal({ order, onSave, onClose }) {
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-end gap-3 px-5 py-4 border-t border-slate-100">
+        <div className="flex items-center justify-end gap-3 px-5 py-4 border-t border-zinc-200">
           <button
             onClick={onClose}
-            className="px-4 py-2 rounded-lg text-sm font-medium border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors"
+            className="px-4 py-2 rounded-lg text-sm font-medium border border-zinc-200 text-zinc-600 hover:bg-zinc-100 transition-colors"
           >
             Annuler
           </button>
           <button
             onClick={handleSave}
             disabled={saving}
-            className={`px-4 py-2 rounded-lg text-sm font-medium text-white bg-wine-700 hover:bg-wine-800 transition-colors ${saving ? 'opacity-60 cursor-not-allowed' : ''}`}
+            className={`px-4 py-2 rounded-lg text-sm font-medium text-white bg-[#2d4a6b] hover:bg-[#1e3349] transition-colors ${saving ? 'opacity-60 cursor-not-allowed' : ''}`}
           >
             {saving ? 'Enregistrement…' : 'Enregistrer'}
           </button>

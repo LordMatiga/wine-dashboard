@@ -15,8 +15,8 @@ const STATUS_STYLES = {
 
 export default function StatusBadge({ status }) {
   const style = STATUS_STYLES[status] ?? {
-    wrapper: 'bg-slate-50 text-slate-800',
-    dot: 'bg-slate-400',
+    wrapper: 'bg-zinc-100 text-zinc-800',
+    dot: 'bg-zinc-400',
   }
 
   return (

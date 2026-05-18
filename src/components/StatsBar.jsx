@@ -5,7 +5,7 @@ export default function StatsBar({ orders }) {
   const err = orders.filter(o => o.status === 'Erreur IA').length
 
   return (
-    <p className="text-xs text-slate-400 text-center py-2">
+    <p className="text-xs text-zinc-500 text-center py-2">
       Total {total} · En attente {att} · Traitées {tra} · Erreurs {err}
     </p>
   )
