@@ -15,7 +15,14 @@ webPush.setVapidDetails(
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "*" } })
+    return new Response(null, {
+      status: 200,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+        "Access-Control-Allow-Methods": "POST, OPTIONS"
+      }
+    })
   }
 
   const { status, client_name } = await req.json()
@@ -54,6 +61,9 @@ serve(async (req) => {
 
   return new Response(JSON.stringify({ sent }), {
     status: 200,
-    headers: { "Access-Control-Allow-Origin": "*" }
+    headers: {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*"
+    }
   })
 })
