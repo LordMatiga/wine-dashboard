@@ -23,7 +23,7 @@ export async function subscribeToPush(userLabel) {
 }
 
 export async function sendPushNotification(status, client_name) {
-  await fetch('https://ydrlwtmgvgbbgbminydv.supabase.co/functions/v1/send-push', {
+  const res = await fetch('https://ydrlwtmgvgbbgbminydv.supabase.co/functions/v1/send-push', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -31,4 +31,7 @@ export async function sendPushNotification(status, client_name) {
     },
     body: JSON.stringify({ status, client_name })
   })
+  const json = await res.json().catch(() => ({}))
+  console.log('[push] status=%s sent=%d http=%d', status, json.sent ?? '?', res.status)
+  if (!res.ok) throw new Error(`Edge Function error ${res.status}: ${JSON.stringify(json)}`)
 }

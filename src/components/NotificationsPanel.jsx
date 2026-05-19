@@ -2,6 +2,17 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase.js'
 import StatusBadge from './StatusBadge.jsx'
 
+const STORAGE_KEY = 'dismissed_notification_ids'
+
+function getDismissed() {
+  try { return new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')) }
+  catch { return new Set() }
+}
+
+function saveDismissed(set) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify([...set]))
+}
+
 function formatDate(dateStr) {
   if (!dateStr) return '—'
   return new Date(dateStr).toLocaleString('fr-FR', {
@@ -23,11 +34,20 @@ export default function NotificationsPanel({ onSelectOrder, onDelete }) {
         .order('created_at', { ascending: false })
         .limit(50)
 
-      setNotifications(data ?? [])
+      const dismissed = getDismissed()
+      setNotifications((data ?? []).filter(n => !dismissed.has(n.id)))
       setLoading(false)
     }
     loadNotifications()
   }, [])
+
+  function dismiss(id) {
+    const dismissed = getDismissed()
+    dismissed.add(id)
+    saveDismissed(dismissed)
+    setNotifications(prev => prev.filter(n => n.id !== id))
+    onDelete(id)
+  }
 
   if (loading) {
     return <p className="text-xs text-zinc-400 text-center py-8">Chargement...</p>
@@ -70,7 +90,7 @@ export default function NotificationsPanel({ onSelectOrder, onDelete }) {
               </div>
             </div>
             <button
-              onClick={(e) => { e.stopPropagation(); setNotifications(prev => prev.filter(n => n.id !== entry.id)); onDelete(entry.id) }}
+              onClick={(e) => { e.stopPropagation(); dismiss(entry.id) }}
               className="ml-auto p-1.5 rounded-lg text-zinc-300 hover:text-red-500 hover:bg-red-50 transition flex-shrink-0"
               aria-label="Supprimer"
             >
