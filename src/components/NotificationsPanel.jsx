@@ -29,6 +29,7 @@ export default function NotificationsPanel({ onSelectOrder, onDelete }) {
       } catch (err) {
         console.error("Erreur de chargement:", err);
       } finally {
+        console.log("DEBUG SUPABASE DONNÉES :", data);
         setLoading(false); // Le chargement est fini
       }
     };
