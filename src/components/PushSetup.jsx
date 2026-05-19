@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { subscribeToPush } from '../lib/webpush.js'
 import { supabase } from '../lib/supabase.js'
 import { askNotificationPermission, subscribeToPush } from '../lib/webpush.js'
 
