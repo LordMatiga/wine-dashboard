@@ -144,6 +144,9 @@ export default function App() {
                 setEditingOrder(order)
                 setActiveTab('orders')
               }}
+              onDelete={async (id) => {
+                await supabase.from('order_history').delete().eq('id', id)
+              }}
             />
           </div>
         )}

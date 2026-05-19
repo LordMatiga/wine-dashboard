@@ -10,7 +10,7 @@ function formatDate(dateStr) {
   })
 }
 
-export default function NotificationsPanel({ onSelectOrder }) {
+export default function NotificationsPanel({ onSelectOrder, onDelete }) {
   const [notifications, setNotifications] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -69,6 +69,13 @@ export default function NotificationsPanel({ onSelectOrder }) {
                 <StatusBadge status={after} />
               </div>
             </div>
+            <button
+              onClick={(e) => { e.stopPropagation(); setNotifications(prev => prev.filter(n => n.id !== entry.id)); onDelete(entry.id) }}
+              className="ml-auto p-1.5 rounded-lg text-zinc-300 hover:text-red-500 hover:bg-red-50 transition flex-shrink-0"
+              aria-label="Supprimer"
+            >
+              🗑
+            </button>
           </li>
         )
       })}
