@@ -2,12 +2,12 @@ import { useState } from 'react'
 import AutocompleteInput from './AutocompleteInput.jsx'
 import OrderHistory from './OrderHistory.jsx'
 
-const STATUSES = ['Entrante', 'Traitée', 'À traiter']
+const STATUSES = ['Entrante', 'À traiter', 'Traitée']
 
 const STATUS_ACTIVE = {
   'Entrante': 'bg-blue-50 text-blue-800 border-blue-300',
-  'Traitée': 'bg-emerald-50 text-emerald-800 border-emerald-300',
   'À traiter': 'bg-amber-50 text-amber-800 border-amber-300',
+  'Traitée': 'bg-emerald-50 text-emerald-800 border-emerald-300',
 }
 
 export default function EditModal({ order, onSave, onClose }) {
@@ -20,16 +20,24 @@ export default function EditModal({ order, onSave, onClose }) {
   const [saving, setSaving] = useState(false)
   const [showHistory, setShowHistory] = useState(false)
   const [resetStatus, setResetStatus] = useState(true)
+  const [userModified, setUserModified] = useState(false)
 
   function set(key, value) {
     setForm(prev => ({ ...prev, [key]: value }))
+  }
+
+  function markModified() {
+    if (!userModified) {
+      setUserModified(true)
+      setForm(f => ({ ...f, status: 'À traiter' }))
+    }
   }
 
   async function handleSave() {
     setSaving(true)
     try {
       const updates = { ...form }
-      if (resetStatus && form.status !== 'À traiter') {
+      if (userModified && resetStatus) {
         updates.status = 'À traiter'
       }
       await onSave(order.id, updates)
@@ -78,17 +86,20 @@ export default function EditModal({ order, onSave, onClose }) {
                   type="text"
                   value={form.client_name}
                   onChange={e => set('client_name', e.target.value)}
+                  onInput={markModified}
                   className="w-full px-3 py-2 text-sm rounded-lg border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-[#2d4a6b]/20 focus:border-[#2d4a6b]"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-medium text-zinc-700 mb-1">Fournisseur</label>
-                <AutocompleteInput
-                  value={form.supplier_name}
-                  onChange={val => setForm(f => ({ ...f, supplier_name: val }))}
-                  placeholder="Fournisseur..."
-                />
+                <div onInput={markModified}>
+                  <AutocompleteInput
+                    value={form.supplier_name}
+                    onChange={val => setForm(f => ({ ...f, supplier_name: val }))}
+                    placeholder="Fournisseur..."
+                  />
+                </div>
               </div>
 
               <div>
@@ -97,6 +108,7 @@ export default function EditModal({ order, onSave, onClose }) {
                   rows={4}
                   value={form.transcription}
                   onChange={e => set('transcription', e.target.value)}
+                  onInput={markModified}
                   className="w-full px-3 py-2 text-sm rounded-lg border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-[#2d4a6b]/20 focus:border-[#2d4a6b] resize-none"
                 />
               </div>
@@ -118,26 +130,25 @@ export default function EditModal({ order, onSave, onClose }) {
                     </button>
                   ))}
                 </div>
+
+                {userModified && (
+                  <div className="flex items-center gap-2 mt-2">
+                    <input
+                      type="checkbox"
+                      id="resetStatus"
+                      checked={resetStatus}
+                      onChange={e => setResetStatus(e.target.checked)}
+                      className="rounded border-zinc-300 cursor-pointer"
+                    />
+                    <label htmlFor="resetStatus" className="text-xs text-zinc-600 cursor-pointer">
+                      Repasser en « À traiter »
+                    </label>
+                  </div>
+                )}
               </div>
             </div>
           )}
         </div>
-
-        {/* Checkbox repasser en À traiter — visible si pas déjà À traiter, en mode formulaire */}
-        {!showHistory && form.status !== 'À traiter' && (
-          <div className="flex items-center gap-2 px-5 pb-2">
-            <input
-              type="checkbox"
-              id="resetStatus"
-              checked={resetStatus}
-              onChange={e => setResetStatus(e.target.checked)}
-              className="rounded border-zinc-300 cursor-pointer"
-            />
-            <label htmlFor="resetStatus" className="text-xs text-zinc-600 cursor-pointer">
-              Repasser en « À traiter »
-            </label>
-          </div>
-        )}
 
         {/* Footer — visible uniquement en mode formulaire */}
         {!showHistory && (
