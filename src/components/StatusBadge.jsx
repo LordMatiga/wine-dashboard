@@ -1,21 +1,21 @@
 const STATUS_STYLES = {
-  'En attente': {
-    wrapper: 'bg-amber-50 text-amber-800',
+  'Entrante': {
+    wrapper: 'bg-blue-50 text-blue-800 border border-blue-200',
+    dot: 'bg-blue-400',
+  },
+  'À traiter': {
+    wrapper: 'bg-amber-50 text-amber-800 border border-amber-200',
     dot: 'bg-amber-400',
   },
   'Traitée': {
-    wrapper: 'bg-emerald-50 text-emerald-800',
+    wrapper: 'bg-emerald-50 text-emerald-800 border border-emerald-200',
     dot: 'bg-emerald-400',
-  },
-  'Erreur IA': {
-    wrapper: 'bg-red-50 text-red-800',
-    dot: 'bg-red-400',
   },
 }
 
 export default function StatusBadge({ status }) {
   const style = STATUS_STYLES[status] ?? {
-    wrapper: 'bg-zinc-100 text-zinc-800',
+    wrapper: 'bg-zinc-100 text-zinc-800 border border-zinc-200',
     dot: 'bg-zinc-400',
   }
 

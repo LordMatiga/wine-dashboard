@@ -2,12 +2,12 @@ import { useState } from 'react'
 import AutocompleteInput from './AutocompleteInput.jsx'
 import OrderHistory from './OrderHistory.jsx'
 
-const STATUSES = ['En attente', 'Traitée', 'Erreur IA']
+const STATUSES = ['Entrante', 'Traitée', 'À traiter']
 
 const STATUS_ACTIVE = {
-  'En attente': 'bg-amber-50 text-amber-800 border-amber-300',
+  'Entrante': 'bg-blue-50 text-blue-800 border-blue-300',
   'Traitée': 'bg-emerald-50 text-emerald-800 border-emerald-300',
-  'Erreur IA': 'bg-red-50 text-red-800 border-red-300',
+  'À traiter': 'bg-amber-50 text-amber-800 border-amber-300',
 }
 
 export default function EditModal({ order, onSave, onClose }) {
@@ -15,10 +15,11 @@ export default function EditModal({ order, onSave, onClose }) {
     client_name: order.client_name ?? '',
     supplier_name: order.supplier_name ?? '',
     transcription: order.transcription ?? '',
-    status: order.status ?? 'En attente',
+    status: order.status ?? 'Entrante',
   })
   const [saving, setSaving] = useState(false)
   const [showHistory, setShowHistory] = useState(false)
+  const [resetStatus, setResetStatus] = useState(true)
 
   function set(key, value) {
     setForm(prev => ({ ...prev, [key]: value }))
@@ -27,7 +28,11 @@ export default function EditModal({ order, onSave, onClose }) {
   async function handleSave() {
     setSaving(true)
     try {
-      await onSave(order.id, form)
+      const updates = { ...form }
+      if (resetStatus && form.status !== 'À traiter') {
+        updates.status = 'À traiter'
+      }
+      await onSave(order.id, updates)
     } finally {
       setSaving(false)
     }
@@ -117,6 +122,22 @@ export default function EditModal({ order, onSave, onClose }) {
             </div>
           )}
         </div>
+
+        {/* Checkbox repasser en À traiter — visible si pas déjà À traiter, en mode formulaire */}
+        {!showHistory && form.status !== 'À traiter' && (
+          <div className="flex items-center gap-2 px-5 pb-2">
+            <input
+              type="checkbox"
+              id="resetStatus"
+              checked={resetStatus}
+              onChange={e => setResetStatus(e.target.checked)}
+              className="rounded border-zinc-300 cursor-pointer"
+            />
+            <label htmlFor="resetStatus" className="text-xs text-zinc-600 cursor-pointer">
+              Repasser en « À traiter »
+            </label>
+          </div>
+        )}
 
         {/* Footer — visible uniquement en mode formulaire */}
         {!showHistory && (

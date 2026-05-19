@@ -1,6 +1,6 @@
 import AutocompleteInput from './AutocompleteInput.jsx'
 
-const FILTERS = ['Tous', 'En attente', 'Traitée', 'Erreur IA']
+const FILTERS = ['Tous', 'Entrante', 'Traitée', 'À traiter']
 
 export default function SearchFilters({ search, onSearch, statusFilter, onStatusFilter }) {
   return (
