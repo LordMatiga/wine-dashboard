@@ -9,7 +9,7 @@ export default function PushSetup({ onClose }) {
 
   async function handleSubscribe(userLabel) {
   try {
-    // 1. Demande de permission directe (clic utilisateur)
+    // 1. Demande de permission directe (clic utilisateur par exemple)
     const hasPermission = await askNotificationPermission();
     if (!hasPermission) throw new Error('Permission refusée');
 
