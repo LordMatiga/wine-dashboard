@@ -6,8 +6,12 @@ export default function Header() {
           <img
             src="/logo-grunfalcot.png"
             alt="Grün Falcot & Co."
-            className="h-8 w-auto"
+            className="h-11 w-auto"
           />
+          <div>
+            <p className="text-sm font-bold text-zinc-800 leading-tight">Grün Falcot &amp; Co</p>
+            <p className="text-xs text-zinc-500 leading-tight">Suivi des commandes</p>
+          </div>
         </div>
         <div className="flex items-center gap-2 text-xs text-zinc-500">
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
