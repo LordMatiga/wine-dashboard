@@ -14,20 +14,38 @@ export default function NotificationsPanel({ onSelectOrder, onDelete }) {
   const [notifications, setNotifications] = useState([])
   const [loading, setLoading] = useState(true)
 
-  // 1. Pour l'écouteur Supabase (Realtime)
-useEffect(() => {
-  const channel = supabase.channel('custom-all-channel')
-    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications' }, (payload) => {
-      // ⚠️ TRÈS IMPORTANT : Utilise 'prev' ici au lieu de 'notifications'
-      setNotifications(prev => [payload.new, ...prev]); 
-    })
-    .subscribe();
+  useEffect(() => {
+    // 1. Fonction de récupération initiale
+    const fetchNotifications = async () => {
+      try {
+        setLoading(true); // On commence par charger
+        const { data, error } = await supabase
+          .from('notifications')
+          .select('*, orders(*)') // Assure-toi que cette jointure est correcte
+          .order('created_at', { ascending: false });
 
-  return () => {
-    supabase.removeChannel(channel);
-  };
-}, []); // Le tableau de dépendances DOIT rester vide []
+        if (error) throw error;
+        setNotifications(data || []);
+      } catch (err) {
+        console.error("Erreur de chargement:", err);
+      } finally {
+        setLoading(false); // Le chargement est fini
+      }
+    };
 
+    fetchNotifications();
+
+    // 2. Abonnement temps réel
+    const channel = supabase.channel('custom-all-channel')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications' }, (payload) => {
+        setNotifications(prev => [payload.new, ...prev]);
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []); // Exécuté une seule fois au montage
 const handleDelete = async (id) => {
   // Supprime immédiatement de l'affichage pour que ce soit fluide
   setNotifications(prev => prev.filter(notif => notif.id !== id));
