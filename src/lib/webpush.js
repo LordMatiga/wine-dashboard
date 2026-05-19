@@ -6,20 +6,26 @@ function urlBase64ToUint8Array(base64String) {
   const rawData = window.atob(base64)
   return Uint8Array.from([...rawData].map(c => c.charCodeAt(0)))
 }
+// lib/webpush.js
 
+// Fonction 1 : Juste la permission
+export async function askNotificationPermission() {
+  const permission = await Notification.requestPermission();
+  return permission === 'granted';
+}
+
+// Fonction 2 : L'abonnement (sans demander la permission)
 export async function subscribeToPush(userLabel) {
   if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
-    throw new Error('Push non supporté sur ce navigateur')
+    throw new Error('Push non supporté');
   }
-  const registration = await navigator.serviceWorker.ready
-  const permission = await Notification.requestPermission()
-  if (permission !== 'granted') throw new Error('Permission refusée')
-
+  const registration = await navigator.serviceWorker.ready;
+  
   const subscription = await registration.pushManager.subscribe({
     userVisibleOnly: true,
     applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
-  })
-  return subscription
+  });
+  return subscription;
 }
 
 export async function sendPushNotification(status, client_name) {

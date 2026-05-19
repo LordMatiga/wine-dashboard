@@ -14,21 +14,35 @@ export default function NotificationsPanel({ onSelectOrder, onDelete }) {
   const [notifications, setNotifications] = useState([])
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    const loadNotifications = async () => {
-      const { data } = await supabase
-        .from('order_history')
-        .select('*, orders(id, client_name, supplier_name, status)')
-        .not('changes->status', 'is', null)
-        .order('created_at', { ascending: false })
-        .limit(50)
+  // 1. Pour l'écouteur Supabase (Realtime)
+useEffect(() => {
+  const channel = supabase.channel('custom-all-channel')
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications' }, (payload) => {
+      // ⚠️ TRÈS IMPORTANT : Utilise 'prev' ici au lieu de 'notifications'
+      setNotifications(prev => [payload.new, ...prev]); 
+    })
+    .subscribe();
 
-      setNotifications(data ?? [])
-      setLoading(false)
-    }
-    loadNotifications()
-  }, [])
+  return () => {
+    supabase.removeChannel(channel);
+  };
+}, []); // Le tableau de dépendances DOIT rester vide []
 
+const handleDelete = async (id) => {
+  // Supprime immédiatement de l'affichage pour que ce soit fluide
+  setNotifications(prev => prev.filter(notif => notif.id !== id));
+
+  // Supprime de la base de données Supabase
+  const { error } = await supabase
+    .from('notifications')
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    console.error("Erreur lors de la suppression:", error);
+    // Si tu veux être perfectionniste, tu peux rajouter la notification dans la liste ici en cas d'erreur
+  }
+};
   if (loading) {
     return <p className="text-xs text-zinc-400 text-center py-8">Chargement...</p>
   }

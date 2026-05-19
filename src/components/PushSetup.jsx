@@ -7,8 +7,13 @@ export default function PushSetup({ onClose }) {
   const [message, setMessage] = useState('')
 
   async function handleSubscribe(userLabel) {
-    try {
-      const subscription = await subscribeToPush(userLabel)
+  try {
+    // 1. Demande de permission directe (clic utilisateur)
+    const hasPermission = await askNotificationPermission();
+    if (!hasPermission) throw new Error('Permission refusée');
+
+    // 2. Maintenant on s'abonne
+    const subscription = await subscribeToPush(userLabel);
       await supabase
         .from('push_subscriptions')
         .upsert(
