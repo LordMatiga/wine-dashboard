@@ -54,8 +54,11 @@ serve(async (req) => {
     try {
       await webPush.sendNotification(sub.subscription, JSON.stringify({ title, body }))
       sent++
-    } catch (e) {
+    } catch (e: any) {
       console.error("Push failed:", e)
+      if (e.statusCode === 410 || e.statusCode === 404) {
+        await supabase.from("push_subscriptions").delete().eq("id", sub.id)
+      }
     }
   }
 

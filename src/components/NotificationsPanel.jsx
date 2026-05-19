@@ -70,7 +70,7 @@ export default function NotificationsPanel({ onSelectOrder, onDelete }) {
               </div>
             </div>
             <button
-              onClick={(e) => { e.stopPropagation(); onDelete(entry.id) }}
+              onClick={(e) => { e.stopPropagation(); setNotifications(prev => prev.filter(n => n.id !== entry.id)); onDelete(entry.id) }}
               className="ml-auto p-1.5 rounded-lg text-zinc-300 hover:text-red-500 hover:bg-red-50 transition flex-shrink-0"
               aria-label="Supprimer"
             >

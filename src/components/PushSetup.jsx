@@ -11,24 +11,16 @@ export default function PushSetup({ onClose }) {
       const subscription = await subscribeToPush(userLabel)
       await supabase
         .from('push_subscriptions')
-        await supabase
-      .from('push_subscriptions')
-      .insert({
-        user_label: userLabel,
-        subscription: subscription.toJSON()
-      })
+        .upsert(
+          { user_label: userLabel, subscription: subscription.toJSON() },
+          { onConflict: 'user_label' }
+        )
       setStep('done')
       setMessage('Notifications activées !')
     } catch (e) {
-  console.error("Push failed:", e)
-
-  if (e.statusCode === 410 || e.statusCode === 404) {
-    await supabase
-      .from("push_subscriptions")
-      .delete()
-      .eq("id", sub.id)
-  }
-}
+      setStep('error')
+      setMessage(e.message)
+    }
   }
 
   return (
