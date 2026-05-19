@@ -8,8 +8,18 @@ import OrderTable from './components/OrderTable.jsx'
 import EditModal from './components/EditModal.jsx'
 import PushSetup from './components/PushSetup.jsx'
 import NotificationsPanel from './components/NotificationsPanel.jsx'
+import TaskTable from './components/TaskTable.jsx'
+import EditTaskModal from './components/EditTaskModal.jsx'
+import UrgentPanel from './components/UrgentPanel.jsx'
 
 const ROLE_LABELS = { assistant: 'Timothée', patron: 'Gérant' }
+
+const TABS = [
+  { id: 'commandes', label: 'Commandes' },
+  { id: 'taches', label: 'Tâches' },
+  { id: 'urgent', label: '🔴 Urgent' },
+  { id: 'notifications', label: 'Notifications' },
+]
 
 export default function App() {
   const [orders, setOrders] = useState([])
@@ -17,9 +27,10 @@ export default function App() {
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('Tous')
   const [editingOrder, setEditingOrder] = useState(null)
+  const [editingTask, setEditingTask] = useState(null)
   const [error, setError] = useState(null)
   const [showPushSetup, setShowPushSetup] = useState(false)
-  const [activeTab, setActiveTab] = useState('orders')
+  const [activeTab, setActiveTab] = useState('commandes')
   const [userRole, setUserRole] = useState(() => localStorage.getItem('user_role') ?? null)
 
   async function fetchOrders() {
@@ -39,12 +50,10 @@ export default function App() {
 
   useEffect(() => {
     fetchOrders()
-
     const channel = supabase
       .channel('orders-realtime')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, fetchOrders)
       .subscribe()
-
     return () => supabase.removeChannel(channel)
   }, [])
 
@@ -56,9 +65,7 @@ export default function App() {
         (o.client_name ?? '').toLowerCase().includes(q) ||
         (o.supplier_name ?? '').toLowerCase().includes(q) ||
         (o.transcription ?? '').toLowerCase().includes(q)
-
       const matchStatus = statusFilter === 'Tous' || o.status === statusFilter
-
       return matchSearch && matchStatus
     })
   }, [orders, search, statusFilter])
@@ -76,32 +83,33 @@ export default function App() {
     }
   }
 
+  async function handleUpdateTask(id, updates) {
+    const { error } = await supabase.from('tasks').update(updates).eq('id', id)
+    if (error) {
+      setError(error.message)
+    } else {
+      setEditingTask(null)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-zinc-100">
       <Header />
 
-      {/* Barre d'onglets + rôle */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-4 flex items-center gap-1">
-        <button
-          onClick={() => setActiveTab('orders')}
-          className={`px-4 py-2 rounded-xl text-sm font-medium transition ${
-            activeTab === 'orders'
-              ? 'bg-[#2d4a6b] text-white'
-              : 'bg-zinc-200 text-zinc-600 hover:bg-zinc-300'
-          }`}
-        >
-          Commandes
-        </button>
-        <button
-          onClick={() => setActiveTab('notifications')}
-          className={`px-4 py-2 rounded-xl text-sm font-medium transition ${
-            activeTab === 'notifications'
-              ? 'bg-[#2d4a6b] text-white'
-              : 'bg-zinc-200 text-zinc-600 hover:bg-zinc-300'
-          }`}
-        >
-          Notifications
-        </button>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-4 flex items-center gap-1 flex-wrap">
+        {TABS.map(tab => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={`px-4 py-2 rounded-xl text-sm font-medium transition ${
+              activeTab === tab.id
+                ? 'bg-[#2d4a6b] text-white'
+                : 'bg-zinc-200 text-zinc-600 hover:bg-zinc-300'
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
         <button
           onClick={() => setShowPushSetup(true)}
           className="ml-auto px-3 py-2 rounded-xl text-xs font-medium bg-zinc-200 text-zinc-600 hover:bg-zinc-300 transition whitespace-nowrap"
@@ -111,7 +119,7 @@ export default function App() {
       </div>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-5">
-        {activeTab === 'orders' ? (
+        {activeTab === 'commandes' && (
           <>
             <SearchFilters
               search={search}
@@ -137,12 +145,27 @@ export default function App() {
 
             <StatsBar orders={orders} />
           </>
-        ) : (
+        )}
+
+        {activeTab === 'taches' && (
+          <TaskTable onEdit={setEditingTask} />
+        )}
+
+        {activeTab === 'urgent' && (
+          <div className="bg-white rounded-2xl border border-zinc-200 shadow-sm overflow-hidden">
+            <UrgentPanel
+              onSelectOrder={order => { setEditingOrder(order); setActiveTab('commandes') }}
+              onSelectTask={task => setEditingTask(task)}
+            />
+          </div>
+        )}
+
+        {activeTab === 'notifications' && (
           <div className="bg-white rounded-2xl border border-zinc-200 shadow-sm overflow-hidden">
             <NotificationsPanel
               onSelectOrder={order => {
                 setEditingOrder(order)
-                setActiveTab('orders')
+                setActiveTab('commandes')
               }}
               onDelete={async (id) => {
                 await supabase.from('order_history').delete().eq('id', id)
@@ -157,6 +180,14 @@ export default function App() {
           order={editingOrder}
           onSave={handleUpdate}
           onClose={() => setEditingOrder(null)}
+        />
+      )}
+
+      {editingTask && (
+        <EditTaskModal
+          task={editingTask}
+          onSave={handleUpdateTask}
+          onClose={() => setEditingTask(null)}
         />
       )}
 

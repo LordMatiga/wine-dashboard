@@ -15,6 +15,7 @@ export default function EditModal({ order, onSave, onClose }) {
     client_name: order.client_name ?? '',
     supplier_name: order.supplier_name ?? '',
     transcription: order.transcription ?? '',
+    urgent: order.urgent ?? false,
     status: order.status ?? 'Entrante',
   })
   const [saving, setSaving] = useState(false)
@@ -111,6 +112,19 @@ export default function EditModal({ order, onSave, onClose }) {
                   onInput={markModified}
                   className="w-full px-3 py-2 text-sm rounded-lg border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-[#2d4a6b]/20 focus:border-[#2d4a6b] resize-none"
                 />
+              </div>
+
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="urgent"
+                  checked={form.urgent ?? false}
+                  onChange={e => setForm(f => ({ ...f, urgent: e.target.checked }))}
+                  className="w-4 h-4 accent-red-600"
+                />
+                <label htmlFor="urgent" className="text-sm text-zinc-600 cursor-pointer">
+                  Marquer comme urgent 🔴
+                </label>
               </div>
 
               <div>
