@@ -1,10 +1,12 @@
 import { useState, useEffect, useMemo } from 'react'
 import { supabase } from './lib/supabase.js'
+import { sendPushNotification } from './lib/webpush.js'
 import Header from './components/Header.jsx'
 import StatsBar from './components/StatsBar.jsx'
 import SearchFilters from './components/SearchFilters.jsx'
 import OrderTable from './components/OrderTable.jsx'
 import EditModal from './components/EditModal.jsx'
+import PushSetup from './components/PushSetup.jsx'
 
 export default function App() {
   const [orders, setOrders] = useState([])
@@ -13,6 +15,7 @@ export default function App() {
   const [statusFilter, setStatusFilter] = useState('Tous')
   const [editingOrder, setEditingOrder] = useState(null)
   const [error, setError] = useState(null)
+  const [showPushSetup, setShowPushSetup] = useState(false)
 
   async function fetchOrders() {
     const { data, error } = await supabase
@@ -60,6 +63,9 @@ export default function App() {
     if (error) {
       setError(error.message)
     } else {
+      if (updates.status) {
+        sendPushNotification(updates.status, editingOrder?.client_name).catch(console.error)
+      }
       setEditingOrder(null)
       fetchOrders()
     }
@@ -69,6 +75,15 @@ export default function App() {
     <div className="min-h-screen bg-zinc-100">
       <Header />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-5">
+        <div className="flex justify-end">
+          <button
+            onClick={() => setShowPushSetup(true)}
+            className="text-xs text-zinc-400 hover:text-zinc-600"
+          >
+            🔔 Activer notifications
+          </button>
+        </div>
+
         <SearchFilters
           search={search}
           onSearch={setSearch}
@@ -85,7 +100,7 @@ export default function App() {
         <OrderTable orders={filteredOrders} loading={loading} onEdit={setEditingOrder} />
 
         {!loading && (
-          <p className="text-xs text-slate-400 text-right">
+          <p className="text-xs text-zinc-500 text-right">
             {filteredOrders.length} résultat{filteredOrders.length !== 1 ? 's' : ''}
             {search || statusFilter !== 'Tous' ? ` sur ${orders.length}` : ''}
           </p>
@@ -100,6 +115,10 @@ export default function App() {
           onSave={handleUpdate}
           onClose={() => setEditingOrder(null)}
         />
+      )}
+
+      {showPushSetup && (
+        <PushSetup onClose={() => setShowPushSetup(false)} />
       )}
     </div>
   )
