@@ -1,9 +1,11 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { FOURNISSEURS } from '../data/fournisseurs.js'
 
 export default function AutocompleteInput({ value, onChange, placeholder, className = '' }) {
   const [suggestions, setSuggestions] = useState([])
   const [showSuggestions, setShowSuggestions] = useState(false)
+  const valueRef = useRef(value)
+  useEffect(() => { valueRef.current = value }, [value])
 
   function handleChange(e) {
     const val = e.target.value
@@ -27,7 +29,12 @@ export default function AutocompleteInput({ value, onChange, placeholder, classN
         value={value}
         onChange={handleChange}
         onFocus={() => setShowSuggestions(true)}
-        onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
+        onBlur={() => setTimeout(() => {
+          setShowSuggestions(false)
+          if (valueRef.current && !FOURNISSEURS.includes(valueRef.current)) {
+            onChange('')
+          }
+        }, 150)}
         placeholder={placeholder}
         className="w-full px-3 py-2 text-sm rounded-lg border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-[#2d4a6b]/20 focus:border-[#2d4a6b] placeholder-zinc-500"
       />
