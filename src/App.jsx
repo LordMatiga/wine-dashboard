@@ -9,6 +9,8 @@ import EditModal from './components/EditModal.jsx'
 import PushSetup from './components/PushSetup.jsx'
 import NotificationsPanel from './components/NotificationsPanel.jsx'
 
+const ROLE_LABELS = { assistant: 'Timothée', patron: 'Gérant' }
+
 export default function App() {
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
@@ -18,6 +20,7 @@ export default function App() {
   const [error, setError] = useState(null)
   const [showPushSetup, setShowPushSetup] = useState(false)
   const [activeTab, setActiveTab] = useState('orders')
+  const [userRole, setUserRole] = useState(() => localStorage.getItem('user_role') ?? null)
 
   async function fetchOrders() {
     const { data, error } = await supabase
@@ -77,8 +80,8 @@ export default function App() {
     <div className="min-h-screen bg-zinc-100">
       <Header />
 
-      {/* Barre d'onglets */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-4 flex gap-1">
+      {/* Barre d'onglets + rôle */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-4 flex items-center gap-1">
         <button
           onClick={() => setActiveTab('orders')}
           className={`px-4 py-2 rounded-xl text-sm font-medium transition ${
@@ -99,20 +102,17 @@ export default function App() {
         >
           Notifications
         </button>
+        <button
+          onClick={() => setShowPushSetup(true)}
+          className="ml-auto px-3 py-2 rounded-xl text-xs font-medium bg-zinc-200 text-zinc-600 hover:bg-zinc-300 transition whitespace-nowrap"
+        >
+          {userRole ? `Rôle : ${ROLE_LABELS[userRole] ?? userRole}` : '🔔 Configurer'}
+        </button>
       </div>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-5">
         {activeTab === 'orders' ? (
           <>
-            <div className="flex justify-end">
-              <button
-                onClick={() => setShowPushSetup(true)}
-                className="text-xs text-zinc-400 hover:text-zinc-600"
-              >
-                🔔 Activer notifications
-              </button>
-            </div>
-
             <SearchFilters
               search={search}
               onSearch={setSearch}
@@ -161,7 +161,10 @@ export default function App() {
       )}
 
       {showPushSetup && (
-        <PushSetup onClose={() => setShowPushSetup(false)} />
+        <PushSetup
+          onClose={() => setShowPushSetup(false)}
+          onRoleSet={role => setUserRole(role)}
+        />
       )}
     </div>
   )

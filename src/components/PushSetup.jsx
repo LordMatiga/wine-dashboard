@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { subscribeToPush } from '../lib/webpush.js'
 import { supabase } from '../lib/supabase.js'
 
-export default function PushSetup({ onClose }) {
+export default function PushSetup({ onClose, onRoleSet }) {
   const [step, setStep] = useState('choose')
   const [message, setMessage] = useState('')
 
@@ -15,6 +15,8 @@ export default function PushSetup({ onClose }) {
           { user_label: userLabel, subscription: subscription.toJSON() },
           { onConflict: 'user_label' }
         )
+      localStorage.setItem('user_role', userLabel)
+      onRoleSet?.(userLabel)
       setStep('done')
       setMessage('Notifications activées !')
     } catch (e) {
