@@ -15,53 +15,20 @@ export default function NotificationsPanel({ onSelectOrder, onDelete }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // 1. Fonction de récupération initiale
-    const fetchNotifications = async () => {
-      try {
-        setLoading(true); // On commence par charger
-        const { data, error } = await supabase
-          .from('notifications')
-          .select('*, orders(*)') // Assure-toi que cette jointure est correcte
-          .order('created_at', { ascending: false });
+    const loadNotifications = async () => {
+      const { data } = await supabase
+        .from('order_history')
+        .select('*, orders(id, client_name, supplier_name, status)')
+        .not('changes->status', 'is', null)
+        .order('created_at', { ascending: false })
+        .limit(50)
 
-        if (error) throw error;
-        setNotifications(data || []);
-      } catch (err) {
-        console.error("Erreur de chargement:", err);
-      } finally {
-        console.log("DEBUG SUPABASE DONNÉES :", data);
-        setLoading(false); // Le chargement est fini
-      }
-    };
+      setNotifications(data ?? [])
+      setLoading(false)
+    }
+    loadNotifications()
+  }, [])
 
-    fetchNotifications();
-
-    // 2. Abonnement temps réel
-    const channel = supabase.channel('custom-all-channel')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications' }, (payload) => {
-        setNotifications(prev => [payload.new, ...prev]);
-      })
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, []); // Exécuté une seule fois au montage
-const handleDelete = async (id) => {
-  // Supprime immédiatement de l'affichage pour que ce soit fluide
-  setNotifications(prev => prev.filter(notif => notif.id !== id));
-
-  // Supprime de la base de données Supabase
-  const { error } = await supabase
-    .from('notifications')
-    .delete()
-    .eq('id', id);
-
-  if (error) {
-    console.error("Erreur lors de la suppression:", error);
-    // Si tu veux être perfectionniste, tu peux rajouter la notification dans la liste ici en cas d'erreur
-  }
-};
   if (loading) {
     return <p className="text-xs text-zinc-400 text-center py-8">Chargement...</p>
   }
@@ -103,7 +70,7 @@ const handleDelete = async (id) => {
               </div>
             </div>
             <button
-              onClick={(e) => { e.stopPropagation(); setNotifications(prev => prev.filter(n => n.id !== entry.id)); onDelete(entry.id) }}
+              onClick={(e) => { e.stopPropagation(); onDelete(entry.id) }}
               className="ml-auto p-1.5 rounded-lg text-zinc-300 hover:text-red-500 hover:bg-red-50 transition flex-shrink-0"
               aria-label="Supprimer"
             >
