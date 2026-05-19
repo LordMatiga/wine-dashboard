@@ -7,6 +7,7 @@ import SearchFilters from './components/SearchFilters.jsx'
 import OrderTable from './components/OrderTable.jsx'
 import EditModal from './components/EditModal.jsx'
 import PushSetup from './components/PushSetup.jsx'
+import NotificationsPanel from './components/NotificationsPanel.jsx'
 
 export default function App() {
   const [orders, setOrders] = useState([])
@@ -16,6 +17,7 @@ export default function App() {
   const [editingOrder, setEditingOrder] = useState(null)
   const [error, setError] = useState(null)
   const [showPushSetup, setShowPushSetup] = useState(false)
+  const [activeTab, setActiveTab] = useState('orders')
 
   async function fetchOrders() {
     const { data, error } = await supabase
@@ -74,39 +76,77 @@ export default function App() {
   return (
     <div className="min-h-screen bg-zinc-100">
       <Header />
+
+      {/* Barre d'onglets */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-4 flex gap-1">
+        <button
+          onClick={() => setActiveTab('orders')}
+          className={`px-4 py-2 rounded-xl text-sm font-medium transition ${
+            activeTab === 'orders'
+              ? 'bg-[#2d4a6b] text-white'
+              : 'bg-zinc-200 text-zinc-600 hover:bg-zinc-300'
+          }`}
+        >
+          Commandes
+        </button>
+        <button
+          onClick={() => setActiveTab('notifications')}
+          className={`px-4 py-2 rounded-xl text-sm font-medium transition ${
+            activeTab === 'notifications'
+              ? 'bg-[#2d4a6b] text-white'
+              : 'bg-zinc-200 text-zinc-600 hover:bg-zinc-300'
+          }`}
+        >
+          Notifications
+        </button>
+      </div>
+
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-5">
-        <div className="flex justify-end">
-          <button
-            onClick={() => setShowPushSetup(true)}
-            className="text-xs text-zinc-400 hover:text-zinc-600"
-          >
-            🔔 Activer notifications
-          </button>
-        </div>
+        {activeTab === 'orders' ? (
+          <>
+            <div className="flex justify-end">
+              <button
+                onClick={() => setShowPushSetup(true)}
+                className="text-xs text-zinc-400 hover:text-zinc-600"
+              >
+                🔔 Activer notifications
+              </button>
+            </div>
 
-        <SearchFilters
-          search={search}
-          onSearch={setSearch}
-          statusFilter={statusFilter}
-          onStatusFilter={setStatusFilter}
-        />
+            <SearchFilters
+              search={search}
+              onSearch={setSearch}
+              statusFilter={statusFilter}
+              onStatusFilter={setStatusFilter}
+            />
 
-        {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl px-4 py-3">
-            ⚠️ Erreur : {error}
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl px-4 py-3">
+                ⚠️ Erreur : {error}
+              </div>
+            )}
+
+            <OrderTable orders={filteredOrders} loading={loading} onEdit={setEditingOrder} />
+
+            {!loading && (
+              <p className="text-xs text-zinc-500 text-right">
+                {filteredOrders.length} résultat{filteredOrders.length !== 1 ? 's' : ''}
+                {search || statusFilter !== 'Tous' ? ` sur ${orders.length}` : ''}
+              </p>
+            )}
+
+            <StatsBar orders={orders} />
+          </>
+        ) : (
+          <div className="bg-white rounded-2xl border border-zinc-200 shadow-sm overflow-hidden">
+            <NotificationsPanel
+              onSelectOrder={order => {
+                setEditingOrder(order)
+                setActiveTab('orders')
+              }}
+            />
           </div>
         )}
-
-        <OrderTable orders={filteredOrders} loading={loading} onEdit={setEditingOrder} />
-
-        {!loading && (
-          <p className="text-xs text-zinc-500 text-right">
-            {filteredOrders.length} résultat{filteredOrders.length !== 1 ? 's' : ''}
-            {search || statusFilter !== 'Tous' ? ` sur ${orders.length}` : ''}
-          </p>
-        )}
-
-        <StatsBar orders={orders} />
       </main>
 
       {editingOrder && (
