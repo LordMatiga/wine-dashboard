@@ -26,6 +26,8 @@ export default function App() {
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('Tous')
+  const [dateFrom, setDateFrom] = useState('')
+  const [dateTo, setDateTo] = useState('')
   const [editingOrder, setEditingOrder] = useState(null)
   const [editingTask, setEditingTask] = useState(null)
   const [error, setError] = useState(null)
@@ -66,9 +68,16 @@ export default function App() {
         (o.supplier_name ?? '').toLowerCase().includes(q) ||
         (o.transcription ?? '').toLowerCase().includes(q)
       const matchStatus = statusFilter === 'Tous' || o.status === statusFilter
-      return matchSearch && matchStatus
+      const matchDate = (() => {
+        if (!dateFrom && !dateTo) return true
+        const d = new Date(o.created_at)
+        if (dateFrom && d < new Date(dateFrom)) return false
+        if (dateTo && d > new Date(dateTo + 'T23:59:59')) return false
+        return true
+      })()
+      return matchSearch && matchStatus && matchDate
     })
-  }, [orders, search, statusFilter])
+  }, [orders, search, statusFilter, dateFrom, dateTo])
 
   async function handleUpdate(id, updates) {
     const { error } = await supabase.from('orders').update(updates).eq('id', id)
@@ -104,26 +113,33 @@ export default function App() {
     <div className="min-h-screen bg-zinc-100">
       <Header />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-4 flex items-center gap-1 flex-wrap">
-        {TABS.map(tab => (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-3 overflow-x-auto scrollbar-none">
+        <div className="flex gap-1 min-w-max">
+          {[
+            { key: 'urgent', label: 'Urgent' },
+            { key: 'commandes', label: 'Commandes' },
+            { key: 'taches', label: 'Tâches' },
+            { key: 'notifications', label: 'Notifications' },
+          ].map(tab => (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key)}
+              className={`px-4 py-2 rounded-xl text-sm font-medium transition whitespace-nowrap ${
+                activeTab === tab.key
+                  ? 'bg-[#2d4a6b] text-white'
+                  : 'bg-zinc-200 text-zinc-600 hover:bg-zinc-300'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
           <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`px-4 py-2 rounded-xl text-sm font-medium transition ${
-              activeTab === tab.id
-                ? 'bg-[#2d4a6b] text-white'
-                : 'bg-zinc-200 text-zinc-600 hover:bg-zinc-300'
-            }`}
+            onClick={() => setShowPushSetup(true)}
+            className="ml-2 px-3 py-2 rounded-xl text-xs font-medium bg-zinc-200 text-zinc-600 hover:bg-zinc-300 transition whitespace-nowrap"
           >
-            {tab.label}
+            {userRole ? `Rôle : ${ROLE_LABELS[userRole] ?? userRole}` : '🔔 Configurer'}
           </button>
-        ))}
-        <button
-          onClick={() => setShowPushSetup(true)}
-          className="ml-auto px-3 py-2 rounded-xl text-xs font-medium bg-zinc-200 text-zinc-600 hover:bg-zinc-300 transition whitespace-nowrap"
-        >
-          {userRole ? `Rôle : ${ROLE_LABELS[userRole] ?? userRole}` : '🔔 Configurer'}
-        </button>
+        </div>
       </div>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-5">
@@ -134,6 +150,10 @@ export default function App() {
               onSearch={setSearch}
               statusFilter={statusFilter}
               onStatusFilter={setStatusFilter}
+              dateFrom={dateFrom}
+              dateTo={dateTo}
+              onDateFrom={setDateFrom}
+              onDateTo={setDateTo}
             />
 
             {error && (

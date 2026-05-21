@@ -1,6 +1,6 @@
 export default function Header() {
   return (
-    <header className="sticky top-0 z-30 bg-zinc-50 border-b border-zinc-300 shadow-sm">
+    <header className="z-30 bg-zinc-50 border-b border-zinc-300 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 relative flex flex-col items-center">
         <img
           src="/logo-grunfalcot.png"
