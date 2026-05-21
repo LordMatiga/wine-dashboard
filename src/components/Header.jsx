@@ -6,11 +6,11 @@ export default function Header({ onNotifClick }) {
         <div />
         
         {/* Logo centré */}
-        <div className="flex justify-center">
+        <div className="flex justify-center h-full">
           <img
             src="/logo-grunfalcot.png"
             alt="Grün Falcot & Co."
-            className="h-7 w-auto"
+            className="h-7 w-auto object contain "
           />
         </div>
 
