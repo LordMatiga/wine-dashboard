@@ -88,7 +88,7 @@ export default function EditModal({ order, onSave, onClose }) {
                   value={form.client_name}
                   onChange={e => set('client_name', e.target.value)}
                   onInput={markModified}
-                  className="w-full px-3 py-2 text-sm rounded-lg border border-stone-200 focus:outline-none focus:ring-2 focus:ring-[#2d4a6b]/20 focus:border-[#2d4a6b]"
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-stone-200 focus:outline-none focus:ring-2 focus:ring-[#c5a059]/20 focus:border-[#c5a059]"
                 />
               </div>
 
@@ -110,7 +110,7 @@ export default function EditModal({ order, onSave, onClose }) {
                   value={form.transcription}
                   onChange={e => set('transcription', e.target.value)}
                   onInput={markModified}
-                  className="w-full px-3 py-2 text-sm rounded-lg border border-stone-200 focus:outline-none focus:ring-2 focus:ring-[#2d4a6b]/20 focus:border-[#2d4a6b] resize-none"
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-stone-200 focus:outline-none focus:ring-2 focus:ring-[#c5a059]/20 focus:border-[#c5a059] resize-none"
                 />
               </div>
 
@@ -176,7 +176,7 @@ export default function EditModal({ order, onSave, onClose }) {
             <button
               onClick={handleSave}
               disabled={saving}
-              className={`px-4 py-2 rounded-lg text-sm font-medium text-white bg-[#2d4a6b] hover:bg-[#1e3349] transition-colors ${saving ? 'opacity-60 cursor-not-allowed' : ''}`}
+              className={`px-4 py-2 rounded-lg text-sm font-medium text-white bg-[#c5a059] hover:bg-[#1e3349] transition-colors ${saving ? 'opacity-60 cursor-not-allowed' : ''}`}
             >
               {saving ? 'Enregistrement…' : 'Enregistrer'}
             </button>

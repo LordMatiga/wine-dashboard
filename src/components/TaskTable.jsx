@@ -79,7 +79,7 @@ export default function TaskTable({ onEdit, onNew }) {
         <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wide">Tâches</h2>
         <button
           onClick={onNew}
-          className="px-3 py-1.5 rounded-lg text-xs font-medium bg-[#2d4a6b] text-white hover:bg-[#1e3349] transition-colors"
+          className="px-3 py-1.5 rounded-lg text-xs font-medium bg-[#c5a059] text-white hover:bg-[#1e3349] transition-colors"
         >
           + Nouvelle tâche
         </button>
