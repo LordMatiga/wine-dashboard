@@ -73,24 +73,24 @@ export default function NotificationsPanel({ onSelectOrder, onDelete, search = '
   }, [notifications, search, statusFilter, dateFrom, dateTo])
 
   if (loading) {
-    return <p className="text-xs text-zinc-400 text-center py-8">Chargement...</p>
+    return <p className="text-xs text-stone-400 text-center py-8">Chargement...</p>
   }
 
   if (notifications.length === 0) {
-    return <p className="text-sm text-zinc-400 text-center py-8">Aucune notification</p>
+    return <p className="text-sm text-stone-400 text-center py-8">Aucune notification</p>
   }
 
   return (
     <>
-      <div className="flex justify-end px-4 py-2 border-b border-zinc-100">
+      <div className="flex justify-end px-4 py-2 border-b border-stone-100">
         <button
           onClick={dismissAll}
-          className="text-xs text-zinc-400 hover:text-red-500 transition"
+          className="text-xs text-stone-400 hover:text-red-500 transition"
         >
           Tout supprimer
         </button>
       </div>
-      <ul className="divide-y divide-zinc-100">
+      <ul className="divide-y divide-stone-100">
         {filtered.map(entry => {
           const statusChange = entry.changes?.status
           const before = statusChange?.before
@@ -102,20 +102,20 @@ export default function NotificationsPanel({ onSelectOrder, onDelete, search = '
             <li
               key={entry.id}
               onClick={() => order && onSelectOrder(order)}
-              className="flex items-start gap-3 px-4 py-3 hover:bg-zinc-100 cursor-pointer transition-colors"
+              className="flex items-start gap-3 px-4 py-3 hover:bg-stone-100 cursor-pointer transition-colors"
             >
               <span className="text-lg mt-0.5 shrink-0">{icon}</span>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between gap-2">
-                  <p className="text-sm font-medium text-zinc-800 truncate">
+                  <p className="text-sm font-medium text-stone-800 truncate">
                     {order?.client_name ?? '—'}
                   </p>
-                  <span className="text-xs text-zinc-400 whitespace-nowrap shrink-0">
+                  <span className="text-xs text-stone-400 whitespace-nowrap shrink-0">
                     {formatDate(entry.created_at)}
                   </span>
                 </div>
-                <p className="text-xs text-zinc-400 mb-1.5">{order?.supplier_name ?? ''}</p>
-                <div className="flex items-center gap-1.5 text-xs text-zinc-500">
+                <p className="text-xs text-stone-400 mb-1.5">{order?.supplier_name ?? ''}</p>
+                <div className="flex items-center gap-1.5 text-xs text-stone-500">
                   <span>{before}</span>
                   <span>→</span>
                   <StatusBadge status={after} />
@@ -123,7 +123,7 @@ export default function NotificationsPanel({ onSelectOrder, onDelete, search = '
               </div>
               <button
                 onClick={(e) => { e.stopPropagation(); dismiss(entry.id) }}
-                className="ml-auto p-1.5 rounded-lg text-zinc-300 hover:text-red-500 hover:bg-red-50 transition flex-shrink-0"
+                className="ml-auto p-1.5 rounded-lg text-stone-300 hover:text-red-500 hover:bg-red-50 transition flex-shrink-0"
                 aria-label="Supprimer"
               >
                 🗑

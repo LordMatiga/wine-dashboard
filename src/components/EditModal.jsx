@@ -49,26 +49,26 @@ export default function EditModal({ order, onSave, onClose }) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-900/50 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/50 backdrop-blur-sm"
       onClick={e => { if (e.target === e.currentTarget) onClose() }}
     >
-      <div className="bg-zinc-50 rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+      <div className="bg-stone-50 rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-zinc-200">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-stone-200">
           <div>
-            <h2 className="text-base font-semibold text-zinc-800">Modifier la commande</h2>
-            <p className="text-xs text-zinc-500 font-mono mt-0.5">{order.id?.slice(0, 8)}…</p>
+            <h2 className="text-base font-semibold text-stone-800">Modifier la commande</h2>
+            <p className="text-xs text-stone-500 font-mono mt-0.5">{order.id?.slice(0, 8)}…</p>
           </div>
           <div className="flex items-center gap-3">
             <button
               onClick={() => setShowHistory(h => !h)}
-              className="text-xs text-zinc-500 hover:text-zinc-800 underline cursor-pointer bg-transparent border-none p-0"
+              className="text-xs text-stone-500 hover:text-stone-800 underline cursor-pointer bg-transparent border-none p-0"
             >
               {showHistory ? '← Retour' : 'Historique'}
             </button>
             <button
               onClick={onClose}
-              className="w-8 h-8 flex items-center justify-center rounded-lg text-zinc-500 hover:bg-zinc-200 hover:text-zinc-600 transition-colors"
+              className="w-8 h-8 flex items-center justify-center rounded-lg text-stone-500 hover:bg-stone-200 hover:text-stone-600 transition-colors"
             >
               ✕
             </button>
@@ -82,18 +82,18 @@ export default function EditModal({ order, onSave, onClose }) {
           ) : (
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-zinc-700 mb-1">Client</label>
+                <label className="block text-xs font-medium text-stone-700 mb-1">Client</label>
                 <input
                   type="text"
                   value={form.client_name}
                   onChange={e => set('client_name', e.target.value)}
                   onInput={markModified}
-                  className="w-full px-3 py-2 text-sm rounded-lg border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-[#2d4a6b]/20 focus:border-[#2d4a6b]"
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-stone-200 focus:outline-none focus:ring-2 focus:ring-[#2d4a6b]/20 focus:border-[#2d4a6b]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-zinc-700 mb-1">Fournisseur</label>
+                <label className="block text-xs font-medium text-stone-700 mb-1">Fournisseur</label>
                 <div onInput={markModified}>
                   <AutocompleteInput
                     value={form.supplier_name}
@@ -104,13 +104,13 @@ export default function EditModal({ order, onSave, onClose }) {
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-zinc-700 mb-1">Retranscription</label>
+                <label className="block text-xs font-medium text-stone-700 mb-1">Retranscription</label>
                 <textarea
                   rows={4}
                   value={form.transcription}
                   onChange={e => set('transcription', e.target.value)}
                   onInput={markModified}
-                  className="w-full px-3 py-2 text-sm rounded-lg border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-[#2d4a6b]/20 focus:border-[#2d4a6b] resize-none"
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-stone-200 focus:outline-none focus:ring-2 focus:ring-[#2d4a6b]/20 focus:border-[#2d4a6b] resize-none"
                 />
               </div>
 
@@ -122,13 +122,13 @@ export default function EditModal({ order, onSave, onClose }) {
                   onChange={e => setForm(f => ({ ...f, urgent: e.target.checked }))}
                   className="w-4 h-4 accent-red-600"
                 />
-                <label htmlFor="urgent" className="text-sm text-zinc-600 cursor-pointer">
+                <label htmlFor="urgent" className="text-sm text-stone-600 cursor-pointer">
                   Marquer comme urgent 🔴
                 </label>
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-zinc-700 mb-2">Statut</label>
+                <label className="block text-xs font-medium text-stone-700 mb-2">Statut</label>
                 <div className="flex gap-2">
                   {STATUSES.map(s => (
                     <button
@@ -137,7 +137,7 @@ export default function EditModal({ order, onSave, onClose }) {
                       className={`flex-1 py-1.5 px-2 rounded-lg text-xs font-medium border transition-colors ${
                         form.status === s
                           ? STATUS_ACTIVE[s]
-                          : 'bg-zinc-100 text-zinc-500 border-zinc-200 hover:bg-zinc-200'
+                          : 'bg-stone-100 text-stone-500 border-stone-200 hover:bg-stone-200'
                       }`}
                     >
                       {s}
@@ -152,9 +152,9 @@ export default function EditModal({ order, onSave, onClose }) {
                       id="resetStatus"
                       checked={resetStatus}
                       onChange={e => setResetStatus(e.target.checked)}
-                      className="rounded border-zinc-300 cursor-pointer"
+                      className="rounded border-stone-300 cursor-pointer"
                     />
-                    <label htmlFor="resetStatus" className="text-xs text-zinc-600 cursor-pointer">
+                    <label htmlFor="resetStatus" className="text-xs text-stone-600 cursor-pointer">
                       Repasser en « À traiter »
                     </label>
                   </div>
@@ -166,10 +166,10 @@ export default function EditModal({ order, onSave, onClose }) {
 
         {/* Footer — visible uniquement en mode formulaire */}
         {!showHistory && (
-          <div className="flex items-center justify-end gap-3 px-5 py-4 border-t border-zinc-200">
+          <div className="flex items-center justify-end gap-3 px-5 py-4 border-t border-stone-200">
             <button
               onClick={onClose}
-              className="px-4 py-2 rounded-lg text-sm font-medium border border-zinc-200 text-zinc-600 hover:bg-zinc-100 transition-colors"
+              className="px-4 py-2 rounded-lg text-sm font-medium border border-stone-200 text-stone-600 hover:bg-stone-100 transition-colors"
             >
               Annuler
             </button>

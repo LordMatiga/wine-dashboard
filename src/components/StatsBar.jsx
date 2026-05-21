@@ -5,7 +5,7 @@ export default function StatsBar({ orders }) {
   const atr = orders.filter(o => o.status === 'À traiter').length
 
   return (
-    <p className="text-xs text-zinc-500 text-center py-2">
+    <p className="text-xs text-stone-500 text-center py-2">
       Total {total} · Entrantes {ent} · Traitées {tra} · À traiter {atr}
     </p>
   )

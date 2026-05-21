@@ -7,7 +7,7 @@ const TYPE_STYLES = {
   logistique:   { wrapper: 'bg-orange-50 text-orange-800 border border-orange-200', label: 'Logistique' },
   compta:       { wrapper: 'bg-blue-50 text-blue-800 border border-blue-200',       label: 'Compta' },
   tarif:        { wrapper: 'bg-teal-50 text-teal-800 border border-teal-200',       label: 'Tarif' },
-  autre:        { wrapper: 'bg-zinc-100 text-zinc-600 border border-zinc-200',      label: 'Autre' },
+  autre:        { wrapper: 'bg-stone-100 text-stone-600 border border-stone-200',      label: 'Autre' },
 }
 
 function formatDate(dateStr) {
@@ -70,11 +70,11 @@ export default function AllFeedPanel({ onSelectOrder, onSelectTask, search = '',
     })
   }, [items, search, statusFilter, dateFrom, dateTo])
 
-  if (loading) return <p className="text-xs text-zinc-400 text-center py-16">Chargement...</p>
+  if (loading) return <p className="text-xs text-stone-400 text-center py-16">Chargement...</p>
 
   if (filtered.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 text-zinc-500">
+      <div className="flex flex-col items-center justify-center py-16 text-stone-500">
         <span className="text-4xl mb-3">📭</span>
         <p className="text-sm">Aucun élément</p>
       </div>
@@ -84,9 +84,9 @@ export default function AllFeedPanel({ onSelectOrder, onSelectTask, search = '',
   return (
     <div className="space-y-4">
       {Object.entries(groupByDay(filtered)).map(([day, dayItems]) => (
-        <div key={day} className="bg-white rounded-2xl border border-zinc-200 shadow-sm overflow-hidden">
-          <div className="px-4 py-2 bg-zinc-50 border-b border-zinc-200">
-            <p className="text-xs font-medium text-zinc-500 capitalize">{day}</p>
+        <div key={day} className="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
+          <div className="px-4 py-2 bg-stone-50 border-b border-stone-200">
+            <p className="text-xs font-medium text-stone-500 capitalize">{day}</p>
           </div>
           {dayItems.map(item => {
             const isOrder = item._source === 'order'
@@ -96,7 +96,7 @@ export default function AllFeedPanel({ onSelectOrder, onSelectTask, search = '',
               <div
                 key={`${item._source}-${item.id}`}
                 onClick={() => isOrder ? onSelectOrder(item) : onSelectTask(item)}
-                className="flex items-center gap-3 px-4 py-3 border-b border-zinc-100 last:border-0 hover:bg-zinc-50 cursor-pointer transition-colors"
+                className="flex items-center gap-3 px-4 py-3 border-b border-stone-100 last:border-0 hover:bg-stone-50 cursor-pointer transition-colors"
               >
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-0.5">
@@ -110,10 +110,10 @@ export default function AllFeedPanel({ onSelectOrder, onSelectTask, search = '',
                       </span>
                     )}
                     {item.urgent && <span className="inline-block w-2 h-2 bg-red-500 rounded-full flex-shrink-0" />}
-                    <span className="font-medium text-sm text-zinc-800 truncate">{item.client_name ?? '—'}</span>
+                    <span className="font-medium text-sm text-stone-800 truncate">{item.client_name ?? '—'}</span>
                   </div>
-                  {text && <p className="text-xs text-zinc-400 line-clamp-1">{text}</p>}
-                  <p className="text-xs text-zinc-400 mt-0.5">{formatDate(item.created_at)}</p>
+                  {text && <p className="text-xs text-stone-400 line-clamp-1">{text}</p>}
+                  <p className="text-xs text-stone-400 mt-0.5">{formatDate(item.created_at)}</p>
                 </div>
                 <div className="flex-shrink-0">
                   <StatusBadge status={item.status} />

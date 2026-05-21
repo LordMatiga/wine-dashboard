@@ -104,7 +104,7 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-100">
+    <div className="min-h-screen bg-stone-100">
       <Header onNotifClick={() => setShowPushSetup(true)} />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-2">
@@ -122,7 +122,7 @@ export default function App() {
               className={`px-3 py-1.5 rounded-xl text-xs font-medium transition text-center ${
                 activeTab === tab.key
                   ? 'bg-[#c5a059] text-white'
-                  : 'bg-zinc-200 text-zinc-600 hover:bg-zinc-300'
+                  : 'bg-stone-200 text-stone-600 hover:bg-stone-300'
               }`}
             >
               {tab.label}
@@ -144,7 +144,7 @@ export default function App() {
         />
 
         {activeTab === 'tout' && (
-          <div className="bg-white rounded-2xl border border-zinc-200 shadow-sm overflow-hidden">
+          <div className="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
             <AllFeedPanel
               onSelectOrder={setEditingOrder}
               onSelectTask={setEditingTask}
@@ -167,7 +167,7 @@ export default function App() {
             <OrderTable orders={filteredOrders} loading={loading} onEdit={setEditingOrder} />
 
             {!loading && (
-              <p className="text-xs text-zinc-500 text-right">
+              <p className="text-xs text-stone-500 text-right">
                 {filteredOrders.length} résultat{filteredOrders.length !== 1 ? 's' : ''}
                 {search || statusFilter !== 'Tous' ? ` sur ${orders.length}` : ''}
               </p>
@@ -182,7 +182,7 @@ export default function App() {
         )}
 
         {activeTab === 'urgent' && (
-          <div className="bg-white rounded-2xl border border-zinc-200 shadow-sm overflow-hidden">
+          <div className="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
             <UrgentPanel
               onSelectOrder={order => { setEditingOrder(order); setActiveTab('commandes') }}
               onSelectTask={task => setEditingTask(task)}
@@ -195,7 +195,7 @@ export default function App() {
         )}
 
         {activeTab === 'notifications' && (
-          <div className="bg-white rounded-2xl border border-zinc-200 shadow-sm overflow-hidden">
+          <div className="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
             <NotificationsPanel
               onSelectOrder={order => {
                 setEditingOrder(order)

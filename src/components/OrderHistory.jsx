@@ -40,7 +40,7 @@ export default function OrderHistory({ orderId }) {
   }, [orderId])
 
   if (loading) {
-    return <p className="text-xs text-zinc-400 text-center py-4">Chargement...</p>
+    return <p className="text-xs text-stone-400 text-center py-4">Chargement...</p>
   }
 
   if (error) {
@@ -48,14 +48,14 @@ export default function OrderHistory({ orderId }) {
   }
 
   if (history.length === 0) {
-    return <p className="text-zinc-400 text-sm text-center py-4">Aucun historique</p>
+    return <p className="text-stone-400 text-sm text-center py-4">Aucun historique</p>
   }
 
   return (
-    <ul className="divide-y divide-zinc-100">
+    <ul className="divide-y divide-stone-100">
       {history.map(entry => (
         <li key={entry.id} className="py-3">
-          <p className="text-xs text-zinc-400 mb-1.5">{formatDate(entry.created_at)}</p>
+          <p className="text-xs text-stone-400 mb-1.5">{formatDate(entry.created_at)}</p>
           <div className="space-y-1">
             {Object.entries(entry.changes).map(([field, value]) => {
               const labels = {
@@ -68,10 +68,10 @@ export default function OrderHistory({ orderId }) {
               const apres = value['after'] ?? '—'
               return (
                 <div key={field} className="text-sm mt-1">
-                  <span className="font-medium text-zinc-600">{labels[field] || field} : </span>
-                  <span className="line-through text-zinc-400">{avant}</span>
-                  <span className="text-zinc-400 mx-1">→</span>
-                  <span className="text-zinc-800">{apres}</span>
+                  <span className="font-medium text-stone-600">{labels[field] || field} : </span>
+                  <span className="line-through text-stone-400">{avant}</span>
+                  <span className="text-stone-400 mx-1">→</span>
+                  <span className="text-stone-800">{apres}</span>
                 </div>
               )
             })}

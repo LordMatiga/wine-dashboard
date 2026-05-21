@@ -60,20 +60,20 @@ export default function EditTaskModal({ task, onSave, onClose }) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-900/50 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/50 backdrop-blur-sm"
       onClick={e => { if (e.target === e.currentTarget) onClose() }}
     >
-      <div className="bg-zinc-50 rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between px-5 py-4 border-b border-zinc-200">
+      <div className="bg-stone-50 rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-stone-200">
           <div>
-            <h2 className="text-base font-semibold text-zinc-800">
+            <h2 className="text-base font-semibold text-stone-800">
               {task.id ? 'Modifier la tâche' : 'Nouvelle tâche'}
             </h2>
-            {task.id && <p className="text-xs text-zinc-500 font-mono mt-0.5">{task.id.slice(0, 8)}…</p>}
+            {task.id && <p className="text-xs text-stone-500 font-mono mt-0.5">{task.id.slice(0, 8)}…</p>}
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 flex items-center justify-center rounded-lg text-zinc-500 hover:bg-zinc-200 hover:text-zinc-600 transition-colors"
+            className="w-8 h-8 flex items-center justify-center rounded-lg text-stone-500 hover:bg-stone-200 hover:text-stone-600 transition-colors"
           >
             ✕
           </button>
@@ -81,11 +81,11 @@ export default function EditTaskModal({ task, onSave, onClose }) {
 
         <div className="px-5 py-4 space-y-4">
           <div>
-            <label className="block text-xs font-medium text-zinc-700 mb-1">Type</label>
+            <label className="block text-xs font-medium text-stone-700 mb-1">Type</label>
             <select
               value={form.type}
               onChange={e => { set('type', e.target.value); markModified() }}
-              className="w-full px-3 py-2 text-sm rounded-lg border border-zinc-200 bg-white focus:outline-none focus:ring-2 focus:ring-[#2d4a6b]/20 focus:border-[#2d4a6b]"
+              className="w-full px-3 py-2 text-sm rounded-lg border border-stone-200 bg-white focus:outline-none focus:ring-2 focus:ring-[#2d4a6b]/20 focus:border-[#2d4a6b]"
             >
               {TASK_TYPES.map(t => (
                 <option key={t.value} value={t.value}>{t.label}</option>
@@ -94,19 +94,19 @@ export default function EditTaskModal({ task, onSave, onClose }) {
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-zinc-700 mb-1">Client</label>
+            <label className="block text-xs font-medium text-stone-700 mb-1">Client</label>
             <input
               type="text"
               value={form.client_name}
               onChange={e => set('client_name', e.target.value)}
               onInput={markModified}
-              className="w-full px-3 py-2 text-sm rounded-lg border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-[#2d4a6b]/20 focus:border-[#2d4a6b]"
+              className="w-full px-3 py-2 text-sm rounded-lg border border-stone-200 focus:outline-none focus:ring-2 focus:ring-[#2d4a6b]/20 focus:border-[#2d4a6b]"
             />
           </div>
 
           {showSupplier && (
             <div>
-              <label className="block text-xs font-medium text-zinc-700 mb-1">Fournisseur</label>
+              <label className="block text-xs font-medium text-stone-700 mb-1">Fournisseur</label>
               <div onInput={markModified}>
                 <AutocompleteInput
                   value={form.supplier_name}
@@ -118,13 +118,13 @@ export default function EditTaskModal({ task, onSave, onClose }) {
           )}
 
           <div>
-            <label className="block text-xs font-medium text-zinc-700 mb-1">Description</label>
+            <label className="block text-xs font-medium text-stone-700 mb-1">Description</label>
             <textarea
               rows={4}
               value={form.description}
               onChange={e => set('description', e.target.value)}
               onInput={markModified}
-              className="w-full px-3 py-2 text-sm rounded-lg border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-[#2d4a6b]/20 focus:border-[#2d4a6b] resize-none"
+              className="w-full px-3 py-2 text-sm rounded-lg border border-stone-200 focus:outline-none focus:ring-2 focus:ring-[#2d4a6b]/20 focus:border-[#2d4a6b] resize-none"
             />
           </div>
 
@@ -136,13 +136,13 @@ export default function EditTaskModal({ task, onSave, onClose }) {
               onChange={e => { set('urgent', e.target.checked); markModified() }}
               className="w-4 h-4 accent-red-600"
             />
-            <label htmlFor="task-urgent" className="text-sm text-zinc-600 cursor-pointer">
+            <label htmlFor="task-urgent" className="text-sm text-stone-600 cursor-pointer">
               Marquer comme urgent 🔴
             </label>
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-zinc-700 mb-2">Statut</label>
+            <label className="block text-xs font-medium text-stone-700 mb-2">Statut</label>
             <div className="flex gap-2">
               {STATUSES.map(s => (
                 <button
@@ -151,7 +151,7 @@ export default function EditTaskModal({ task, onSave, onClose }) {
                   className={`flex-1 py-1.5 px-2 rounded-lg text-xs font-medium border transition-colors ${
                     form.status === s
                       ? STATUS_ACTIVE[s]
-                      : 'bg-zinc-100 text-zinc-500 border-zinc-200 hover:bg-zinc-200'
+                      : 'bg-stone-100 text-stone-500 border-stone-200 hover:bg-stone-200'
                   }`}
                 >
                   {s}
@@ -166,9 +166,9 @@ export default function EditTaskModal({ task, onSave, onClose }) {
                   id="task-resetStatus"
                   checked={resetStatus}
                   onChange={e => setResetStatus(e.target.checked)}
-                  className="rounded border-zinc-300 cursor-pointer"
+                  className="rounded border-stone-300 cursor-pointer"
                 />
-                <label htmlFor="task-resetStatus" className="text-xs text-zinc-600 cursor-pointer">
+                <label htmlFor="task-resetStatus" className="text-xs text-stone-600 cursor-pointer">
                   Repasser en « À traiter »
                 </label>
               </div>
@@ -176,10 +176,10 @@ export default function EditTaskModal({ task, onSave, onClose }) {
           </div>
         </div>
 
-        <div className="flex items-center justify-end gap-3 px-5 py-4 border-t border-zinc-200">
+        <div className="flex items-center justify-end gap-3 px-5 py-4 border-t border-stone-200">
           <button
             onClick={onClose}
-            className="px-4 py-2 rounded-lg text-sm font-medium border border-zinc-200 text-zinc-600 hover:bg-zinc-100 transition-colors"
+            className="px-4 py-2 rounded-lg text-sm font-medium border border-stone-200 text-stone-600 hover:bg-stone-100 transition-colors"
           >
             Annuler
           </button>
