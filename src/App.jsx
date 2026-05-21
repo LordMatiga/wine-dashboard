@@ -84,7 +84,12 @@ export default function App() {
   }
 
   async function handleUpdateTask(id, updates) {
-    const { error } = await supabase.from('tasks').update(updates).eq('id', id)
+    let error
+    if (id) {
+      ;({ error } = await supabase.from('tasks').update(updates).eq('id', id))
+    } else {
+      ;({ error } = await supabase.from('tasks').insert(updates))
+    }
     if (error) {
       setError(error.message)
     } else {
@@ -148,7 +153,7 @@ export default function App() {
         )}
 
         {activeTab === 'taches' && (
-          <TaskTable onEdit={setEditingTask} />
+          <TaskTable onEdit={setEditingTask} onNew={() => setEditingTask({})} />
         )}
 
         {activeTab === 'urgent' && (

@@ -34,8 +34,10 @@ export default function EditTaskModal({ task, onSave, onClose }) {
     setForm(prev => ({ ...prev, [key]: value }))
   }
 
+  const isNew = !task.id
+
   function markModified() {
-    if (!userModified) {
+    if (!isNew && !userModified) {
       setUserModified(true)
       setForm(f => ({ ...f, status: 'À traiter' }))
     }
@@ -64,8 +66,10 @@ export default function EditTaskModal({ task, onSave, onClose }) {
       <div className="bg-zinc-50 rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between px-5 py-4 border-b border-zinc-200">
           <div>
-            <h2 className="text-base font-semibold text-zinc-800">Modifier la tâche</h2>
-            <p className="text-xs text-zinc-500 font-mono mt-0.5">{task.id?.slice(0, 8)}…</p>
+            <h2 className="text-base font-semibold text-zinc-800">
+              {task.id ? 'Modifier la tâche' : 'Nouvelle tâche'}
+            </h2>
+            {task.id && <p className="text-xs text-zinc-500 font-mono mt-0.5">{task.id.slice(0, 8)}…</p>}
           </div>
           <button
             onClick={onClose}
@@ -155,7 +159,7 @@ export default function EditTaskModal({ task, onSave, onClose }) {
               ))}
             </div>
 
-            {userModified && (
+            {!isNew && userModified && (
               <div className="flex items-center gap-2 mt-2">
                 <input
                   type="checkbox"

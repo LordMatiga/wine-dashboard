@@ -39,7 +39,7 @@ function SkeletonRow() {
   )
 }
 
-export default function TaskTable({ onEdit }) {
+export default function TaskTable({ onEdit, onNew }) {
   const [tasks, setTasks] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -63,7 +63,19 @@ export default function TaskTable({ onEdit }) {
 
   return (
     <div className="bg-zinc-50 rounded-xl border border-zinc-200 shadow-sm overflow-hidden">
-      <div className="hidden sm:grid grid-cols-12 gap-2 px-4 py-2.5 bg-zinc-100 border-b border-zinc-200 text-xs font-semibold text-zinc-500 uppercase tracking-wide">
+      <div className="flex items-center justify-between px-4 py-2.5 bg-zinc-100 border-b border-zinc-200">
+        <div className="hidden sm:flex gap-6 text-xs font-semibold text-zinc-500 uppercase tracking-wide">
+          Tâches
+        </div>
+        <button
+          onClick={onNew}
+          className="ml-auto px-3 py-1.5 rounded-lg text-xs font-medium bg-[#2d4a6b] text-white hover:bg-[#1e3349] transition-colors"
+        >
+          + Nouvelle tâche
+        </button>
+      </div>
+
+      <div className="hidden sm:grid grid-cols-12 gap-2 px-4 py-2 bg-zinc-50 border-b border-zinc-200 text-xs font-semibold text-zinc-400 uppercase tracking-wide">
         <div className="col-span-2">Date</div>
         <div className="col-span-1">Type</div>
         <div className="col-span-2">Client</div>
