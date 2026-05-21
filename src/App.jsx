@@ -28,6 +28,7 @@ export default function App() {
   const [showPushSetup, setShowPushSetup] = useState(false)
   const [activeTab, setActiveTab] = useState('tout')
   const [userRole, setUserRole] = useState(() => localStorage.getItem('user_role') ?? null)
+  const [connected, setConnected] = useState(false)
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => setSession(data.session))
@@ -55,7 +56,7 @@ export default function App() {
     const channel = supabase
       .channel('orders-realtime')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, fetchOrders)
-      .subscribe()
+      .subscribe(status => setConnected(status === 'SUBSCRIBED'))
     return () => supabase.removeChannel(channel)
   }, [])
 
@@ -114,7 +115,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-stone-100">
-      <Header onNotifClick={() => setShowPushSetup(true)} onLogout={() => supabase.auth.signOut()} />
+      <Header onNotifClick={() => setShowPushSetup(true)} onLogout={() => supabase.auth.signOut()} connected={connected} />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-2">
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-1">

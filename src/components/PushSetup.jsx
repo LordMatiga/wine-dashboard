@@ -9,12 +9,19 @@ export default function PushSetup({ onClose, onRoleSet }) {
   async function handleSubscribe(userLabel) {
     try {
       const subscription = await subscribeToPush(userLabel)
+      const sub = subscription.toJSON()
+
+      // Supprimer l'ancienne entrée pour ce device si elle existe
       await supabase
         .from('push_subscriptions')
-        .upsert(
-          { user_label: userLabel, subscription: subscription.toJSON() },
-          { onConflict: 'user_label' }
-        )
+        .delete()
+        .filter('subscription->>endpoint', 'eq', sub.endpoint)
+
+      // Insérer la nouvelle subscription
+      await supabase
+        .from('push_subscriptions')
+        .insert({ user_label: userLabel, subscription: sub })
+
       localStorage.setItem('user_role', userLabel)
       onRoleSet?.(userLabel)
       setStep('done')
