@@ -1,8 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
-
-const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!
-const SUPABASE_SERVICE_KEY = Deno.env.get("SERVICE_ROLE_KEY")!
+import { Pool } from "https://deno.land/x/postgres@v0.17.0/mod.ts"
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
@@ -18,24 +15,25 @@ serve(async (req) => {
   try {
     const raw = await req.json()
 
-    // Map Groq field names → tasks table column names
-    const task = {
-      client_name:   raw.client      ?? raw.client_name   ?? null,
-      supplier_name: raw.fournisseur ?? raw.supplier_name  ?? null,
-      description:   raw.description ?? null,
-      type:          raw.type        ?? "autre",
-      urgent:        raw.urgent      ?? false,
-      status:        raw.status      ?? "Entrante",
-    }
+    const pool = new Pool(Deno.env.get("SUPABASE_DB_URL")!, 1, true)
+    const conn = await pool.connect()
 
-    const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY)
-    const { error } = await supabase.from("tasks").insert(task)
-
-    if (error) {
-      return new Response(JSON.stringify({ error: error.message }), {
-        status: 400,
-        headers: { ...CORS, "Content-Type": "application/json" },
-      })
+    try {
+      await conn.queryObject(
+        `INSERT INTO tasks (client_name, supplier_name, description, type, urgent, status)
+         VALUES ($1, $2, $3, $4, $5, $6)`,
+        [
+          raw.client      ?? raw.client_name   ?? null,
+          raw.fournisseur ?? raw.supplier_name  ?? null,
+          raw.description ?? null,
+          raw.type        ?? "autre",
+          raw.urgent      ?? false,
+          raw.status      ?? "Entrante",
+        ]
+      )
+    } finally {
+      conn.release()
+      await pool.end()
     }
 
     return new Response(JSON.stringify({ ok: true }), {
