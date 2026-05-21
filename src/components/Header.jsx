@@ -1,4 +1,4 @@
-export default function Header({ onNotifClick }) {
+export default function Header({ onNotifClick, onLogout }) {
   return (
     <header className="z-30 bg-stone-50 border-b border-stone-300 shadow-sm">
       <div className="max-w-7xl mx-auto px-3 sm:px-4 h-11 grid grid-cols-[1fr_auto_1fr] items-center">
@@ -18,12 +18,8 @@ export default function Header({ onNotifClick }) {
         {/* Colonne droite : Notifications */}
         <div className="flex items-center justify-end gap-2">
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-          <button
-            onClick={onNotifClick}
-            className="text-stone-400 hover:text-stone-600 text-sm p-1"
-          >
-            🔔
-          </button>
+          <button onClick={onNotifClick} className="text-stone-400 hover:text-stone-600 text-sm p-1">🔔</button>
+          <button onClick={onLogout} className="text-stone-400 hover:text-stone-600 text-sm p-1" title="Déconnexion">⎋</button>
         </div>
       </div>
     </header>

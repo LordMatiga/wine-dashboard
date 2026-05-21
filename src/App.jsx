@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import { supabase } from './lib/supabase.js'
 import { sendPushNotification } from './lib/webpush.js'
+import LoginPage from './components/LoginPage.jsx'
 import Header from './components/Header.jsx'
 import StatsBar from './components/StatsBar.jsx'
 import SearchFilters from './components/SearchFilters.jsx'
@@ -13,9 +14,8 @@ import EditTaskModal from './components/EditTaskModal.jsx'
 import UrgentPanel from './components/UrgentPanel.jsx'
 import AllFeedPanel from './components/AllFeedPanel.jsx'
 
-const ROLE_LABELS = { assistant: 'Assistant', patron: 'Gérant' }
-
 export default function App() {
+  const [session, setSession] = useState(undefined)
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
@@ -28,6 +28,12 @@ export default function App() {
   const [showPushSetup, setShowPushSetup] = useState(false)
   const [activeTab, setActiveTab] = useState('tout')
   const [userRole, setUserRole] = useState(() => localStorage.getItem('user_role') ?? null)
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => setSession(data.session))
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, s) => setSession(s))
+    return () => subscription.unsubscribe()
+  }, [])
 
   async function fetchOrders() {
     const { data, error } = await supabase
@@ -103,9 +109,12 @@ export default function App() {
     }
   }
 
+  if (session === undefined) return null
+  if (!session) return <LoginPage />
+
   return (
     <div className="min-h-screen bg-stone-100">
-      <Header onNotifClick={() => setShowPushSetup(true)} />
+      <Header onNotifClick={() => setShowPushSetup(true)} onLogout={() => supabase.auth.signOut()} />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-2">
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-1">
