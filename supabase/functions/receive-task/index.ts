@@ -13,7 +13,10 @@ serve(async (req) => {
   }
 
   try {
-    const raw = await req.json()
+    const rawParsed = await req.json()
+    const raw = Object.fromEntries(Object.entries(rawParsed).map(([k, v]) => [k.trim(), v]))
+
+    console.log("raw JSON reçu:", JSON.stringify(raw))
 
     const pool = new Pool(Deno.env.get("SUPABASE_DB_URL")!, 1, true)
     const conn = await pool.connect()
