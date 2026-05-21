@@ -26,7 +26,7 @@ export default function App() {
   const [editingTask, setEditingTask] = useState(null)
   const [error, setError] = useState(null)
   const [showPushSetup, setShowPushSetup] = useState(false)
-  const [activeTab, setActiveTab] = useState('commandes')
+  const [activeTab, setActiveTab] = useState('tout')
   const [userRole, setUserRole] = useState(() => localStorage.getItem('user_role') ?? null)
 
   async function fetchOrders() {
@@ -121,7 +121,7 @@ export default function App() {
               onClick={() => setActiveTab(tab.key)}
               className={`px-3 py-1.5 rounded-xl text-xs font-medium transition text-center ${
                 activeTab === tab.key
-                  ? 'bg-[#2d4a6b] text-white'
+                  ? 'bg-[#c5a059] text-white'
                   : 'bg-zinc-200 text-zinc-600 hover:bg-zinc-300'
               }`}
             >

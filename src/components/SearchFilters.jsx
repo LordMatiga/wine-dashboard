@@ -9,7 +9,7 @@ export default function SearchFilters({ search, onSearch, statusFilter, onStatus
           value={search}
           onChange={e => onSearch(e.target.value)}
           placeholder="Client, fournisseur, mot-clé..."
-          className="flex-1 px-3 py-1.5 text-sm rounded-lg border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-[#2d4a6b]/20 focus:border-[#2d4a6b] placeholder-zinc-400"
+          className="flex-1 px-3 py-1.5 text-sm rounded-lg border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-[#c5a059]/20 focus:border-[#c5a059] placeholder-zinc-400"
         />
         <div className="flex gap-1.5 flex-wrap">
           {FILTERS.map(f => (
@@ -18,7 +18,7 @@ export default function SearchFilters({ search, onSearch, statusFilter, onStatus
               onClick={() => onStatusFilter(f)}
               className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-colors ${
                 statusFilter === f
-                  ? 'bg-[#2d4a6b] text-white'
+                  ? 'bg-[#c5a059] text-white'
                   : 'bg-zinc-200 text-zinc-600 hover:bg-zinc-300'
               }`}
             >
@@ -33,14 +33,14 @@ export default function SearchFilters({ search, onSearch, statusFilter, onStatus
           type="date"
           value={dateFrom}
           onChange={e => onDateFrom(e.target.value)}
-          className="px-3 py-1.5 rounded-xl border border-zinc-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#2d4a6b]/20 focus:border-[#2d4a6b]/60 transition bg-white"
+          className="px-3 py-1.5 rounded-xl border border-zinc-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#c5a059]/20 focus:border-[#c5a059]/60 transition bg-white"
         />
         <span className="text-xs text-zinc-500 font-medium">au</span>
         <input
           type="date"
           value={dateTo}
           onChange={e => onDateTo(e.target.value)}
-          className="px-3 py-1.5 rounded-xl border border-zinc-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#2d4a6b]/20 focus:border-[#2d4a6b]/60 transition bg-white"
+          className="px-3 py-1.5 rounded-xl border border-zinc-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#c5a059]/20 focus:border-[#c5a059]/60 transition bg-white"
         />
         {(dateFrom || dateTo) && (
           <button
