@@ -93,6 +93,9 @@ export default function App() {
     if (error) {
       setError(error.message)
     } else {
+      if (updates.status) {
+        sendPushNotification(updates.status, editingTask?.client_name).catch(console.error)
+      }
       setEditingTask(null)
     }
   }
