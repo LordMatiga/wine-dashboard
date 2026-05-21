@@ -34,37 +34,39 @@ function SkeletonRow() {
 
 export default function OrderTable({ orders, loading, onEdit }) {
   return (
-    <div className="bg-zinc-50 rounded-xl border border-zinc-200 shadow-sm overflow-hidden">
-      {/* Desktop header */}
-      <div className="hidden sm:grid grid-cols-12 gap-2 px-4 py-2.5 bg-zinc-100 border-b border-zinc-200 text-xs font-semibold text-zinc-500 uppercase tracking-wide">
-        <div className="col-span-2">Date</div>
-        <div className="col-span-2">Client</div>
-        <div className="col-span-2">Fournisseur</div>
-        <div className="col-span-4">Retranscription</div>
-        <div className="col-span-2">Statut</div>
-      </div>
-
+    <div className="space-y-4">
+      {/* Desktop header - Note: garde le header ici, il sera répété par groupe pour un look cohérent */}
       {loading ? (
         Array.from({ length: 4 }).map((_, i) => <SkeletonRow key={i} />)
       ) : orders.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-16 text-zinc-500">
+        <div className="flex flex-col items-center justify-center py-16 text-zinc-500 bg-white rounded-2xl border border-zinc-200">
           <span className="text-4xl mb-3">🔎</span>
           <p className="text-sm">Aucune commande trouvée</p>
         </div>
       ) : (
         Object.entries(groupByDay(orders)).map(([day, dayOrders]) => (
-          <div key={day}>
-            <div className="px-4 py-2 bg-zinc-100 border-y border-zinc-200">
+          <div key={day} className="bg-white rounded-2xl border border-zinc-200 shadow-sm overflow-hidden">
+            <div className="px-4 py-2 bg-zinc-50 border-b border-zinc-200">
               <p className="text-xs font-medium text-zinc-500 capitalize">{day}</p>
             </div>
+            
+            {/* Header desktop spécifique au groupe */}
+            <div className="hidden sm:grid grid-cols-12 gap-2 px-4 py-2.5 bg-zinc-50/50 border-b border-zinc-100 text-xs font-semibold text-zinc-500 uppercase tracking-wide">
+              <div className="col-span-2">Date</div>
+              <div className="col-span-2">Client</div>
+              <div className="col-span-2">Fournisseur</div>
+              <div className="col-span-4">Retranscription</div>
+              <div className="col-span-2">Statut</div>
+            </div>
+
             {dayOrders.map(order => (
               <div
                 key={order.id}
                 onClick={() => onEdit(order)}
-                className="border-b border-zinc-200 last:border-0 cursor-pointer"
+                className="border-b border-zinc-100 last:border-0 cursor-pointer hover:bg-zinc-50 transition-colors"
               >
                 {/* Desktop row */}
-                <div className="hidden sm:grid grid-cols-12 gap-2 px-4 py-3 items-center hover:bg-zinc-100/70 transition-colors">
+                <div className="hidden sm:grid grid-cols-12 gap-2 px-4 py-3 items-center">
                   <div className="col-span-2 text-xs text-zinc-500 flex items-center">
                     {order.urgent && <span className="inline-block w-2 h-2 rounded-full bg-red-500 mr-1.5 flex-shrink-0" />}
                     {formatDate(order.created_at)}
@@ -75,7 +77,7 @@ export default function OrderTable({ orders, loading, onEdit }) {
                   <div className="col-span-2"><StatusBadge status={order.status} /></div>
                 </div>
                 {/* Mobile card */}
-                <div className="sm:hidden flex items-center gap-3 px-4 py-3 hover:bg-zinc-100/70 transition-colors">
+                <div className="sm:hidden flex items-center gap-3 px-4 py-3">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-0.5">
                       {order.urgent && <span className="inline-block w-2 h-2 bg-red-500 rounded-full flex-shrink-0" />}

@@ -74,49 +74,49 @@ export default function TaskTable({ onEdit, onNew }) {
   }, [])
 
   return (
-    <div className="bg-zinc-50 rounded-xl border border-zinc-200 shadow-sm overflow-hidden">
-      <div className="flex items-center justify-between px-4 py-2.5 bg-zinc-100 border-b border-zinc-200">
-        <div className="hidden sm:flex gap-6 text-xs font-semibold text-zinc-500 uppercase tracking-wide">
-          Tâches
-        </div>
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h2 className="text-sm font-semibold text-zinc-500 uppercase tracking-wide">Tâches</h2>
         <button
           onClick={onNew}
-          className="ml-auto px-3 py-1.5 rounded-lg text-xs font-medium bg-[#2d4a6b] text-white hover:bg-[#1e3349] transition-colors"
+          className="px-3 py-1.5 rounded-lg text-xs font-medium bg-[#2d4a6b] text-white hover:bg-[#1e3349] transition-colors"
         >
           + Nouvelle tâche
         </button>
       </div>
 
-      <div className="hidden sm:grid grid-cols-12 gap-2 px-4 py-2 bg-zinc-50 border-b border-zinc-200 text-xs font-semibold text-zinc-400 uppercase tracking-wide">
-        <div className="col-span-2">Date</div>
-        <div className="col-span-1">Type</div>
-        <div className="col-span-2">Client</div>
-        <div className="col-span-2">Fournisseur</div>
-        <div className="col-span-3">Description</div>
-        <div className="col-span-1">Statut</div>
-        <div className="col-span-1">Urgent</div>
-      </div>
-
       {loading ? (
-        Array.from({ length: 4 }).map((_, i) => <SkeletonRow key={i} />)
+        <div className="bg-white rounded-2xl border border-zinc-200 overflow-hidden">
+          {Array.from({ length: 4 }).map((_, i) => <SkeletonRow key={i} />)}
+        </div>
       ) : tasks.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-16 text-zinc-500">
+        <div className="flex flex-col items-center justify-center py-16 text-zinc-500 bg-white rounded-2xl border border-zinc-200">
           <span className="text-4xl mb-3">📋</span>
           <p className="text-sm">Aucune tâche</p>
         </div>
       ) : (
         Object.entries(groupByDay(tasks)).map(([day, dayTasks]) => (
-          <div key={day}>
-            <div className="px-4 py-2 bg-zinc-100 border-y border-zinc-200">
+          <div key={day} className="bg-white rounded-2xl border border-zinc-200 shadow-sm overflow-hidden">
+            <div className="px-4 py-2 bg-zinc-50 border-b border-zinc-200">
               <p className="text-xs font-medium text-zinc-500 capitalize">{day}</p>
+            </div>
+            {/* Desktop header pour chaque groupe */}
+            <div className="hidden sm:grid grid-cols-12 gap-2 px-4 py-2 bg-zinc-50/50 border-b border-zinc-100 text-xs font-semibold text-zinc-400 uppercase tracking-wide">
+              <div className="col-span-2">Date</div>
+              <div className="col-span-1">Type</div>
+              <div className="col-span-2">Client</div>
+              <div className="col-span-2">Fournisseur</div>
+              <div className="col-span-3">Description</div>
+              <div className="col-span-1">Statut</div>
+              <div className="col-span-1">Urgent</div>
             </div>
             {dayTasks.map(task => (
               <div
                 key={task.id}
                 onClick={() => onEdit(task)}
-                className="border-b border-zinc-200 last:border-0 cursor-pointer"
+                className="border-b border-zinc-100 last:border-0 cursor-pointer hover:bg-zinc-50 transition-colors"
               >
-                <div className="hidden sm:grid grid-cols-12 gap-2 px-4 py-3 items-center hover:bg-zinc-100/70 transition-colors">
+                <div className="hidden sm:grid grid-cols-12 gap-2 px-4 py-3 items-center">
                   <div className="col-span-2 text-xs text-zinc-500 flex items-center">
                     {task.urgent && <span className="inline-block w-2 h-2 rounded-full bg-red-500 mr-1.5 flex-shrink-0" />}
                     {formatDate(task.created_at)}
@@ -128,7 +128,7 @@ export default function TaskTable({ onEdit, onNew }) {
                   <div className="col-span-1"><StatusBadge status={task.status} /></div>
                   <div className="col-span-1 text-base">{task.urgent ? '🔴' : ''}</div>
                 </div>
-                <div className="sm:hidden flex items-center gap-3 px-4 py-3 hover:bg-zinc-100/70 transition-colors">
+                <div className="sm:hidden flex items-center gap-3 px-4 py-3">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-0.5">
                       <TypeBadge type={task.type} />

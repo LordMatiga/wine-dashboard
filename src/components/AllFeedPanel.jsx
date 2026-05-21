@@ -82,10 +82,10 @@ export default function AllFeedPanel({ onSelectOrder, onSelectTask, search = '',
   }
 
   return (
-    <div>
+    <div className="space-y-4">
       {Object.entries(groupByDay(filtered)).map(([day, dayItems]) => (
-        <div key={day}>
-          <div className="px-4 py-2 bg-zinc-100 border-y border-zinc-200">
+        <div key={day} className="bg-white rounded-2xl border border-zinc-200 shadow-sm overflow-hidden">
+          <div className="px-4 py-2 bg-zinc-50 border-b border-zinc-200">
             <p className="text-xs font-medium text-zinc-500 capitalize">{day}</p>
           </div>
           {dayItems.map(item => {
@@ -96,7 +96,7 @@ export default function AllFeedPanel({ onSelectOrder, onSelectTask, search = '',
               <div
                 key={`${item._source}-${item.id}`}
                 onClick={() => isOrder ? onSelectOrder(item) : onSelectTask(item)}
-                className="flex items-center gap-3 px-4 py-3 border-b border-zinc-100 hover:bg-zinc-50 cursor-pointer transition-colors"
+                className="flex items-center gap-3 px-4 py-3 border-b border-zinc-100 last:border-0 hover:bg-zinc-50 cursor-pointer transition-colors"
               >
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-0.5">
