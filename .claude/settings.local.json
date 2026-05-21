@@ -4,7 +4,8 @@
       "Bash(npm create *)",
       "Bash(node -e ' *)",
       "Bash(npm install *)",
-      "Bash(npm run *)"
+      "Bash(npm run *)",
+      "Bash(mkdir -p \"/Users/timotheecoly/Enregistrer commande/supabase/functions/receive-task\")"
     ]
   }
 }
