@@ -13,7 +13,7 @@ import EditTaskModal from './components/EditTaskModal.jsx'
 import UrgentPanel from './components/UrgentPanel.jsx'
 import AllFeedPanel from './components/AllFeedPanel.jsx'
 
-const ROLE_LABELS = { assistant: 'Timothée', patron: 'Gérant' }
+const ROLE_LABELS = { assistant: 'Assistant', patron: 'Gérant' }
 
 export default function App() {
   const [orders, setOrders] = useState([])

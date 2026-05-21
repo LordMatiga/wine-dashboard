@@ -48,7 +48,7 @@ export default function PushSetup({ onClose, onRoleSet }) {
               onClick={() => handleSubscribe('assistant')}
               className="bg-[#2d4a6b] text-white px-4 py-3 rounded-xl text-sm font-medium hover:bg-[#1e3349] transition-colors"
             >
-              Je suis Timothée (assistant)
+              Je suis assistant
             </button>
             <button
               onClick={() => handleSubscribe('patron')}
