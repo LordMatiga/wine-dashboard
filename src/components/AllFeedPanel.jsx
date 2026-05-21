@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { supabase } from '../lib/supabase.js'
 import StatusBadge from './StatusBadge.jsx'
 
@@ -18,7 +18,19 @@ function formatDate(dateStr) {
   })
 }
 
-export default function AllFeedPanel({ onSelectOrder, onSelectTask }) {
+function matchesFilters(item, { q, statusFilter, dateFrom, dateTo }) {
+  const text = item._source === 'order' ? item.transcription : item.description
+  if (q && ![item.client_name, item.supplier_name, text].some(f => (f ?? '').toLowerCase().includes(q))) return false
+  if (statusFilter !== 'Tous' && item.status !== statusFilter) return false
+  if (dateFrom || dateTo) {
+    const d = new Date(item.created_at)
+    if (dateFrom && d < new Date(dateFrom)) return false
+    if (dateTo && d > new Date(dateTo + 'T23:59:59')) return false
+  }
+  return true
+}
+
+export default function AllFeedPanel({ onSelectOrder, onSelectTask, search = '', statusFilter = 'Tous', dateFrom = '', dateTo = '' }) {
   const [items, setItems] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -46,11 +58,16 @@ export default function AllFeedPanel({ onSelectOrder, onSelectTask }) {
     return () => supabase.removeChannel(channel)
   }, [])
 
+  const filtered = useMemo(() => {
+    const q = search.toLowerCase()
+    return items.filter(item => matchesFilters(item, { q, statusFilter, dateFrom, dateTo }))
+  }, [items, search, statusFilter, dateFrom, dateTo])
+
   if (loading) {
     return <p className="text-xs text-zinc-400 text-center py-16">Chargement...</p>
   }
 
-  if (items.length === 0) {
+  if (filtered.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-zinc-500">
         <span className="text-4xl mb-3">📭</span>
@@ -61,36 +78,37 @@ export default function AllFeedPanel({ onSelectOrder, onSelectTask }) {
 
   return (
     <ul className="divide-y divide-zinc-100">
-      {items.map(item => {
+      {filtered.map(item => {
         const isOrder = item._source === 'order'
         const text = isOrder ? item.transcription : item.description
         const typeStyle = !isOrder ? (TYPE_STYLES[item.type] ?? TYPE_STYLES.autre) : null
 
         return (
-          <li
-            key={`${item._source}-${item.id}`}
-            onClick={() => isOrder ? onSelectOrder(item) : onSelectTask(item)}
-            className="flex items-start gap-3 px-4 py-3 hover:bg-zinc-50 cursor-pointer transition-colors"
-          >
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-1 flex-wrap">
-                {isOrder ? (
-                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-[#2d4a6b]/10 text-[#2d4a6b] border border-[#2d4a6b]/20">
-                    Commande
-                  </span>
-                ) : (
-                  <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${typeStyle.wrapper}`}>
-                    {typeStyle.label}
-                  </span>
-                )}
-                {item.urgent && (
-                  <span className="inline-block w-2 h-2 bg-red-500 rounded-full flex-shrink-0" />
-                )}
-                <StatusBadge status={item.status} />
-                <span className="text-xs text-zinc-400 ml-auto whitespace-nowrap">{formatDate(item.created_at)}</span>
+          <li key={`${item._source}-${item.id}`}>
+            <div
+              onClick={() => isOrder ? onSelectOrder(item) : onSelectTask(item)}
+              className="flex items-center gap-3 px-4 py-3 hover:bg-zinc-50 cursor-pointer transition-colors"
+            >
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-0.5">
+                  {isOrder ? (
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-[#2d4a6b]/10 text-[#2d4a6b] border border-[#2d4a6b]/20 flex-shrink-0">
+                      Commande
+                    </span>
+                  ) : (
+                    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium flex-shrink-0 ${typeStyle.wrapper}`}>
+                      {typeStyle.label}
+                    </span>
+                  )}
+                  {item.urgent && <span className="inline-block w-2 h-2 bg-red-500 rounded-full flex-shrink-0" />}
+                  <span className="font-medium text-sm text-zinc-800 truncate">{item.client_name ?? '—'}</span>
+                </div>
+                {text && <p className="text-xs text-zinc-400 line-clamp-1">{text}</p>}
+                <p className="text-xs text-zinc-400 mt-0.5">{formatDate(item.created_at)}</p>
               </div>
-              <p className="text-sm font-medium text-zinc-800 truncate">{item.client_name ?? '—'}</p>
-              {text && <p className="text-xs text-zinc-500 line-clamp-1 mt-0.5">{text}</p>}
+              <div className="flex-shrink-0">
+                <StatusBadge status={item.status} />
+              </div>
             </div>
           </li>
         )

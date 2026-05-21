@@ -112,21 +112,19 @@ export default function TaskTable({ onEdit, onNew }) {
               <div className="col-span-1 text-base">{task.urgent ? '🔴' : ''}</div>
             </div>
 
-            <div className="sm:hidden px-4 py-3 hover:bg-zinc-100/70 transition-colors">
-              <div className="flex items-start justify-between mb-1.5">
-                <div className="flex items-center gap-2 flex-wrap">
+            <div className="sm:hidden flex items-center gap-3 px-4 py-3 hover:bg-zinc-100/70 transition-colors">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-0.5">
                   <TypeBadge type={task.type} />
+                  {task.urgent && <span className="inline-block w-2 h-2 bg-red-500 rounded-full flex-shrink-0" />}
+                  <span className="font-medium text-sm text-zinc-800 truncate">{task.client_name ?? '—'}</span>
                 </div>
-                <div className="flex items-center gap-1.5">
-                  {task.urgent && <span className="text-red-500 text-xs font-bold">🔴</span>}
-                  <StatusBadge status={task.status} />
-                </div>
+                <p className="text-xs text-zinc-400 line-clamp-1">{task.description ?? ''}</p>
+                <p className="text-xs text-zinc-400 mt-0.5">{formatDate(task.created_at)}</p>
               </div>
-              <p className="text-sm font-medium text-zinc-800 mb-0.5">{task.client_name ?? '—'}</p>
-              {task.description && (
-                <p className="text-xs text-zinc-500 line-clamp-2 mb-2">{task.description}</p>
-              )}
-              <span className="text-xs text-zinc-500">{formatDate(task.created_at)}</span>
+              <div className="flex-shrink-0">
+                <StatusBadge status={task.status} />
+              </div>
             </div>
           </div>
         ))

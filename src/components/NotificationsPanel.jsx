@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { supabase } from '../lib/supabase.js'
 import StatusBadge from './StatusBadge.jsx'
 
@@ -21,7 +21,7 @@ function formatDate(dateStr) {
   })
 }
 
-export default function NotificationsPanel({ onSelectOrder, onDelete }) {
+export default function NotificationsPanel({ onSelectOrder, onDelete, search = '', statusFilter = 'Tous', dateFrom = '', dateTo = '' }) {
   const [notifications, setNotifications] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -56,6 +56,22 @@ export default function NotificationsPanel({ onSelectOrder, onDelete }) {
     setNotifications([])
   }
 
+  const filtered = useMemo(() => {
+    const q = search.toLowerCase()
+    return notifications.filter(entry => {
+      const order = entry.orders
+      const after = entry.changes?.status?.after
+      if (q && ![(order?.client_name), (order?.supplier_name)].some(f => (f ?? '').toLowerCase().includes(q))) return false
+      if (statusFilter !== 'Tous' && after !== statusFilter) return false
+      if (dateFrom || dateTo) {
+        const d = new Date(entry.created_at)
+        if (dateFrom && d < new Date(dateFrom)) return false
+        if (dateTo && d > new Date(dateTo + 'T23:59:59')) return false
+      }
+      return true
+    })
+  }, [notifications, search, statusFilter, dateFrom, dateTo])
+
   if (loading) {
     return <p className="text-xs text-zinc-400 text-center py-8">Chargement...</p>
   }
@@ -75,7 +91,7 @@ export default function NotificationsPanel({ onSelectOrder, onDelete }) {
         </button>
       </div>
       <ul className="divide-y divide-zinc-100">
-        {notifications.map(entry => {
+        {filtered.map(entry => {
           const statusChange = entry.changes?.status
           const before = statusChange?.before
           const after = statusChange?.after

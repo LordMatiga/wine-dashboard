@@ -59,21 +59,18 @@ export default function OrderTable({ orders, loading, onEdit }) {
             </div>
 
             {/* Mobile card */}
-            <div className="sm:hidden px-4 py-3 hover:bg-zinc-100/70 transition-colors">
-              <div className="flex items-start justify-between mb-1.5">
-                <div>
-                  <p className="text-sm font-medium text-zinc-800">{order.client_name ?? '—'}</p>
-                  <p className="text-xs text-zinc-500">{order.supplier_name ?? '—'}</p>
+            <div className="sm:hidden flex items-center gap-3 px-4 py-3 hover:bg-zinc-100/70 transition-colors">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-0.5">
+                  {order.urgent && <span className="inline-block w-2 h-2 bg-red-500 rounded-full flex-shrink-0" />}
+                  <span className="font-medium text-sm text-zinc-800 truncate">{order.client_name ?? '—'}</span>
                 </div>
-                <div className="flex items-center gap-1.5">
-                  {order.urgent && <span className="text-red-500 text-xs font-bold">🔴</span>}
-                  <StatusBadge status={order.status} />
-                </div>
+                <p className="text-xs text-zinc-400 line-clamp-1">{order.supplier_name ?? ''}</p>
+                <p className="text-xs text-zinc-400 mt-0.5">{formatDate(order.created_at)}</p>
               </div>
-              {order.transcription && (
-                <p className="text-xs text-zinc-500 line-clamp-2 mb-2">{order.transcription}</p>
-              )}
-              <span className="text-xs text-zinc-500">{formatDate(order.created_at)}</span>
+              <div className="flex-shrink-0">
+                <StatusBadge status={order.status} />
+              </div>
             </div>
           </div>
         ))

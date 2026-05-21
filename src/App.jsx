@@ -15,13 +15,6 @@ import AllFeedPanel from './components/AllFeedPanel.jsx'
 
 const ROLE_LABELS = { assistant: 'Timothée', patron: 'Gérant' }
 
-const TABS = [
-  { id: 'commandes', label: 'Commandes' },
-  { id: 'taches', label: 'Tâches' },
-  { id: 'urgent', label: '🔴 Urgent' },
-  { id: 'notifications', label: 'Notifications' },
-]
-
 export default function App() {
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
@@ -147,28 +140,32 @@ export default function App() {
       </div>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-5">
+        <SearchFilters
+          search={search}
+          onSearch={setSearch}
+          statusFilter={statusFilter}
+          onStatusFilter={setStatusFilter}
+          dateFrom={dateFrom}
+          dateTo={dateTo}
+          onDateFrom={setDateFrom}
+          onDateTo={setDateTo}
+        />
+
         {activeTab === 'tout' && (
           <div className="bg-white rounded-2xl border border-zinc-200 shadow-sm overflow-hidden">
             <AllFeedPanel
               onSelectOrder={setEditingOrder}
               onSelectTask={setEditingTask}
+              search={search}
+              statusFilter={statusFilter}
+              dateFrom={dateFrom}
+              dateTo={dateTo}
             />
           </div>
         )}
 
         {activeTab === 'commandes' && (
           <>
-            <SearchFilters
-              search={search}
-              onSearch={setSearch}
-              statusFilter={statusFilter}
-              onStatusFilter={setStatusFilter}
-              dateFrom={dateFrom}
-              dateTo={dateTo}
-              onDateFrom={setDateFrom}
-              onDateTo={setDateTo}
-            />
-
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl px-4 py-3">
                 ⚠️ Erreur : {error}
@@ -197,6 +194,10 @@ export default function App() {
             <UrgentPanel
               onSelectOrder={order => { setEditingOrder(order); setActiveTab('commandes') }}
               onSelectTask={task => setEditingTask(task)}
+              search={search}
+              statusFilter={statusFilter}
+              dateFrom={dateFrom}
+              dateTo={dateTo}
             />
           </div>
         )}
@@ -211,6 +212,10 @@ export default function App() {
               onDelete={async (id) => {
                 await supabase.from('order_history').delete().eq('id', id)
               }}
+              search={search}
+              statusFilter={statusFilter}
+              dateFrom={dateFrom}
+              dateTo={dateTo}
             />
           </div>
         )}
