@@ -11,6 +11,7 @@ import NotificationsPanel from './components/NotificationsPanel.jsx'
 import TaskTable from './components/TaskTable.jsx'
 import EditTaskModal from './components/EditTaskModal.jsx'
 import UrgentPanel from './components/UrgentPanel.jsx'
+import AllFeedPanel from './components/AllFeedPanel.jsx'
 
 const ROLE_LABELS = { assistant: 'Timothée', patron: 'Gérant' }
 
@@ -113,9 +114,10 @@ export default function App() {
     <div className="min-h-screen bg-zinc-100">
       <Header />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-3 overflow-x-auto scrollbar-none">
-        <div className="flex gap-1 min-w-max">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-3">
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-1.5">
           {[
+            { key: 'tout', label: 'Tout' },
             { key: 'urgent', label: 'Urgent' },
             { key: 'commandes', label: 'Commandes' },
             { key: 'taches', label: 'Tâches' },
@@ -124,7 +126,7 @@ export default function App() {
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className={`px-4 py-2 rounded-xl text-sm font-medium transition whitespace-nowrap ${
+              className={`px-4 py-2.5 rounded-xl text-sm font-medium transition text-center ${
                 activeTab === tab.key
                   ? 'bg-[#2d4a6b] text-white'
                   : 'bg-zinc-200 text-zinc-600 hover:bg-zinc-300'
@@ -133,9 +135,11 @@ export default function App() {
               {tab.label}
             </button>
           ))}
+        </div>
+        <div className="flex justify-end mt-1.5">
           <button
             onClick={() => setShowPushSetup(true)}
-            className="ml-2 px-3 py-2 rounded-xl text-xs font-medium bg-zinc-200 text-zinc-600 hover:bg-zinc-300 transition whitespace-nowrap"
+            className="px-3 py-1.5 rounded-xl text-xs font-medium bg-zinc-200 text-zinc-600 hover:bg-zinc-300 transition whitespace-nowrap"
           >
             {userRole ? `Rôle : ${ROLE_LABELS[userRole] ?? userRole}` : '🔔 Configurer'}
           </button>
@@ -143,6 +147,15 @@ export default function App() {
       </div>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-5">
+        {activeTab === 'tout' && (
+          <div className="bg-white rounded-2xl border border-zinc-200 shadow-sm overflow-hidden">
+            <AllFeedPanel
+              onSelectOrder={setEditingOrder}
+              onSelectTask={setEditingTask}
+            />
+          </div>
+        )}
+
         {activeTab === 'commandes' && (
           <>
             <SearchFilters
