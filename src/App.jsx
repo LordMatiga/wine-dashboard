@@ -105,10 +105,10 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-zinc-100">
-      <Header />
+      <Header onNotifClick={() => setShowPushSetup(true)} />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-3">
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-1.5">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-2">
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-1">
           {[
             { key: 'tout', label: 'Tout' },
             { key: 'urgent', label: 'Urgent' },
@@ -119,7 +119,7 @@ export default function App() {
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className={`px-4 py-2.5 rounded-xl text-sm font-medium transition text-center ${
+              className={`px-3 py-1.5 rounded-xl text-xs font-medium transition text-center ${
                 activeTab === tab.key
                   ? 'bg-[#2d4a6b] text-white'
                   : 'bg-zinc-200 text-zinc-600 hover:bg-zinc-300'
@@ -128,14 +128,6 @@ export default function App() {
               {tab.label}
             </button>
           ))}
-        </div>
-        <div className="flex justify-end mt-1.5">
-          <button
-            onClick={() => setShowPushSetup(true)}
-            className="px-3 py-1.5 rounded-xl text-xs font-medium bg-zinc-200 text-zinc-600 hover:bg-zinc-300 transition whitespace-nowrap"
-          >
-            {userRole ? `Rôle : ${ROLE_LABELS[userRole] ?? userRole}` : '🔔 Configurer'}
-          </button>
         </div>
       </div>
 
