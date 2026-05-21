@@ -48,7 +48,10 @@ export default function OrderTable({ orders, loading, onEdit }) {
           >
             {/* Desktop row */}
             <div className="hidden sm:grid grid-cols-12 gap-2 px-4 py-3 items-center hover:bg-zinc-100/70 transition-colors">
-              <div className="col-span-2 text-xs text-zinc-500">{formatDate(order.created_at)}</div>
+              <div className="col-span-2 text-xs text-zinc-500 flex items-center">
+                {order.urgent && <span className="inline-block w-2 h-2 rounded-full bg-red-500 mr-1.5 flex-shrink-0" />}
+                {formatDate(order.created_at)}
+              </div>
               <div className="col-span-2 text-sm font-medium text-zinc-800 truncate">{order.client_name ?? '—'}</div>
               <div className="col-span-2 text-sm text-zinc-600 truncate">{order.supplier_name ?? '—'}</div>
               <div className="col-span-4 text-xs text-zinc-500 line-clamp-2">{order.transcription ?? '—'}</div>
@@ -62,7 +65,10 @@ export default function OrderTable({ orders, loading, onEdit }) {
                   <p className="text-sm font-medium text-zinc-800">{order.client_name ?? '—'}</p>
                   <p className="text-xs text-zinc-500">{order.supplier_name ?? '—'}</p>
                 </div>
-                <StatusBadge status={order.status} />
+                <div className="flex items-center gap-1.5">
+                  {order.urgent && <span className="text-red-500 text-xs font-bold">🔴</span>}
+                  <StatusBadge status={order.status} />
+                </div>
               </div>
               {order.transcription && (
                 <p className="text-xs text-zinc-500 line-clamp-2 mb-2">{order.transcription}</p>

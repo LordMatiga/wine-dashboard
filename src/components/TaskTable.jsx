@@ -100,7 +100,10 @@ export default function TaskTable({ onEdit, onNew }) {
             className="border-b border-zinc-200 last:border-0 cursor-pointer"
           >
             <div className="hidden sm:grid grid-cols-12 gap-2 px-4 py-3 items-center hover:bg-zinc-100/70 transition-colors">
-              <div className="col-span-2 text-xs text-zinc-500">{formatDate(task.created_at)}</div>
+              <div className="col-span-2 text-xs text-zinc-500 flex items-center">
+                {task.urgent && <span className="inline-block w-2 h-2 rounded-full bg-red-500 mr-1.5 flex-shrink-0" />}
+                {formatDate(task.created_at)}
+              </div>
               <div className="col-span-1"><TypeBadge type={task.type} /></div>
               <div className="col-span-2 text-sm font-medium text-zinc-800 truncate">{task.client_name ?? '—'}</div>
               <div className="col-span-2 text-sm text-zinc-600 truncate">{task.supplier_name ?? '—'}</div>
@@ -113,9 +116,11 @@ export default function TaskTable({ onEdit, onNew }) {
               <div className="flex items-start justify-between mb-1.5">
                 <div className="flex items-center gap-2 flex-wrap">
                   <TypeBadge type={task.type} />
-                  {task.urgent && <span className="text-sm">🔴</span>}
                 </div>
-                <StatusBadge status={task.status} />
+                <div className="flex items-center gap-1.5">
+                  {task.urgent && <span className="text-red-500 text-xs font-bold">🔴</span>}
+                  <StatusBadge status={task.status} />
+                </div>
               </div>
               <p className="text-sm font-medium text-zinc-800 mb-0.5">{task.client_name ?? '—'}</p>
               {task.description && (
