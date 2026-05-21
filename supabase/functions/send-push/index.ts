@@ -13,6 +13,15 @@ webPush.setVapidDetails(
   VAPID_PRIVATE_KEY
 )
 
+const TYPE_LABELS: Record<string, string> = {
+  commande: "Commande",
+  fiche_client: "Fiche client",
+  logistique: "Logistique",
+  compta: "Compta",
+  tarif: "Tarif",
+  autre: "Autre",
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, {
@@ -25,7 +34,9 @@ serve(async (req) => {
     })
   }
 
-  const { status, client_name } = await req.json()
+  const { status, client_name, type = "commande" } = await req.json()
+  const typeLabel = TYPE_LABELS[type] ?? "Élément"
+
   const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY)
   const { data: subs } = await supabase.from("push_subscriptions").select("*")
 
@@ -39,11 +50,11 @@ serve(async (req) => {
 
   if (status === "Traitée") {
     targetLabel = "patron"
-    title = "✅ Commande traitée"
+    title = `✅ ${typeLabel} traitée`
     body = `${client_name} a été traitée`
   } else if (status === "À traiter") {
     targetLabel = "assistant"
-    title = "🔔 Commande à traiter"
+    title = `🔔 ${typeLabel} à traiter`
     body = `${client_name} nécessite une action`
   }
 

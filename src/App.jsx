@@ -76,7 +76,7 @@ export default function App() {
       setError(error.message)
     } else {
       if (updates.status) {
-        sendPushNotification(updates.status, editingOrder?.client_name).catch(console.error)
+        sendPushNotification(updates.status, editingOrder?.client_name, 'commande').catch(console.error)
       }
       setEditingOrder(null)
       fetchOrders()
@@ -94,7 +94,7 @@ export default function App() {
       setError(error.message)
     } else {
       if (updates.status) {
-        sendPushNotification(updates.status, editingTask?.client_name).catch(console.error)
+        sendPushNotification(updates.status, editingTask?.client_name, editingTask?.type).catch(console.error)
       }
       setEditingTask(null)
     }

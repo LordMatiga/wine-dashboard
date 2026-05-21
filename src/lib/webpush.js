@@ -22,14 +22,14 @@ export async function subscribeToPush(userLabel) {
   return subscription
 }
 
-export async function sendPushNotification(status, client_name) {
+export async function sendPushNotification(status, client_name, type = 'commande') {
   const res = await fetch('https://ydrlwtmgvgbbgbminydv.supabase.co/functions/v1/send-push', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ' + import.meta.env.VITE_SUPABASE_ANON_KEY
     },
-    body: JSON.stringify({ status, client_name })
+    body: JSON.stringify({ status, client_name, type })
   })
   const json = await res.json().catch(() => ({}))
   console.log('[push] status=%s sent=%d http=%d', status, json.sent ?? '?', res.status)
