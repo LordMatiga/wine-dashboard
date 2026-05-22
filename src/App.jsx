@@ -29,6 +29,7 @@ export default function App() {
   const [error, setError] = useState(null)
   const [showPushSetup, setShowPushSetup] = useState(false)
   const [activeTab, setActiveTab] = useState('tout')
+  const [typeFilter, setTypeFilter] = useState('Tous')
   const [userRole, setUserRole] = useState(() => localStorage.getItem('user_role') ?? null)
   const [connected, setConnected] = useState(false)
 
@@ -134,10 +135,10 @@ export default function App() {
           {[
             { key: 'tout', label: 'Tout' },
             { key: 'urgent', label: 'Urgent' },
+            { key: 'notifications', label: 'Notifs' },
             { key: 'commandes', label: 'Commandes' },
             { key: 'taches', label: 'Tâches' },
             { key: 'documents', label: 'Documents' },
-            { key: 'notifications', label: 'Notifications' },
           ].map(tab => (
             <button
               key={tab.key}
@@ -160,6 +161,8 @@ export default function App() {
           onSearch={setSearch}
           statusFilter={statusFilter}
           onStatusFilter={setStatusFilter}
+          typeFilter={typeFilter}
+          onTypeFilter={setTypeFilter}
           dateFrom={dateFrom}
           dateTo={dateTo}
           onDateFrom={setDateFrom}
@@ -173,6 +176,7 @@ export default function App() {
               onSelectTask={setEditingTask}
               search={search}
               statusFilter={statusFilter}
+              typeFilter={typeFilter}
               dateFrom={dateFrom}
               dateTo={dateTo}
             />
@@ -201,7 +205,7 @@ export default function App() {
         )}
 
         {activeTab === 'taches' && (
-          <TaskTable onEdit={setEditingTask} onNew={() => setEditingTask({})} />
+          <TaskTable onEdit={setEditingTask} onNew={() => setEditingTask({})} typeFilter={typeFilter} />
         )}
 
         {activeTab === 'urgent' && (
@@ -211,6 +215,7 @@ export default function App() {
               onSelectTask={task => setEditingTask(task)}
               search={search}
               statusFilter={statusFilter}
+              typeFilter={typeFilter}
               dateFrom={dateFrom}
               dateTo={dateTo}
             />

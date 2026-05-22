@@ -63,6 +63,7 @@ export default function EditTaskModal({ task, onSave, onDelete, onClose }) {
   const showSupplier = form.type === 'commande' || form.type === 'tarif'
 
   return (
+    <>
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/50 backdrop-blur-sm"
       onClick={e => { if (e.target === e.currentTarget) onClose() }}
@@ -191,18 +192,11 @@ export default function EditTaskModal({ task, onSave, onDelete, onClose }) {
         </div>
 
         <div className="flex items-center justify-between gap-3 px-5 py-4 border-t border-stone-200">
-          {task.id && (confirmDelete ? (
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-stone-500">Supprimer ?</span>
-              <button onClick={() => setConfirmDelete(false)} className="px-3 py-1.5 rounded-lg text-xs font-medium border border-stone-200 text-stone-600 hover:bg-stone-100 transition-colors">Non</button>
-              <button onClick={() => onDelete(task.id)} className="px-3 py-1.5 rounded-lg text-xs font-medium bg-red-500 text-white hover:bg-red-600 transition-colors">Oui, supprimer</button>
-            </div>
-          ) : (
+          {task.id ? (
             <button onClick={() => setConfirmDelete(true)} className="px-3 py-1.5 rounded-lg text-xs font-medium text-red-500 hover:bg-red-50 border border-red-200 transition-colors">
               Supprimer
             </button>
-          ))}
-          {!task.id && <div />}
+          ) : <div />}
           <div className="flex items-center gap-2">
             <button onClick={onClose} className="px-4 py-2 rounded-lg text-sm font-medium border border-stone-200 text-stone-600 hover:bg-stone-100 transition-colors">
               Annuler
@@ -214,5 +208,31 @@ export default function EditTaskModal({ task, onSave, onDelete, onClose }) {
         </div>
       </div>
     </div>
+
+    {/* Confirm delete overlay */}
+    {confirmDelete && (
+      <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+        <div className="absolute inset-0 bg-stone-900/40" onClick={() => setConfirmDelete(false)} />
+        <div className="relative bg-white rounded-2xl shadow-2xl border border-stone-200 px-6 py-5 max-w-xs w-full">
+          <h3 className="text-sm font-semibold text-stone-800 mb-1">Supprimer cette tâche ?</h3>
+          <p className="text-xs text-stone-500 mb-4">Cette action est irréversible. La tâche sera définitivement supprimée.</p>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setConfirmDelete(false)}
+              className="flex-1 px-3 py-2 rounded-xl text-sm font-medium border border-stone-200 text-stone-600 hover:bg-stone-100 transition-colors"
+            >
+              Annuler
+            </button>
+            <button
+              onClick={() => onDelete(task.id)}
+              className="flex-1 px-3 py-2 rounded-xl text-sm font-medium bg-red-500 text-white hover:bg-red-600 transition-colors"
+            >
+              Supprimer
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
+    </>
   )
 }

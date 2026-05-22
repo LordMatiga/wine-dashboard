@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { supabase } from '../lib/supabase.js'
 import StatusBadge from './StatusBadge.jsx'
 
@@ -51,7 +51,7 @@ function SkeletonRow() {
   )
 }
 
-export default function TaskTable({ onEdit, onNew }) {
+export default function TaskTable({ onEdit, onNew, typeFilter = 'Tous' }) {
   const [tasks, setTasks] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -73,6 +73,11 @@ export default function TaskTable({ onEdit, onNew }) {
     return () => supabase.removeChannel(channel)
   }, [])
 
+  const visibleTasks = useMemo(() => {
+    if (!typeFilter || typeFilter === 'Tous' || typeFilter === 'commande') return tasks
+    return tasks.filter(t => t.type === typeFilter)
+  }, [tasks, typeFilter])
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -89,13 +94,13 @@ export default function TaskTable({ onEdit, onNew }) {
         <div className="bg-white rounded-2xl border border-stone-200 overflow-hidden">
           {Array.from({ length: 4 }).map((_, i) => <SkeletonRow key={i} />)}
         </div>
-      ) : tasks.length === 0 ? (
+      ) : visibleTasks.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 text-stone-500 bg-white rounded-2xl border border-stone-200">
           <span className="text-4xl mb-3">📋</span>
           <p className="text-sm">Aucune tâche</p>
         </div>
       ) : (
-        Object.entries(groupByDay(tasks)).map(([day, dayTasks]) => (
+        Object.entries(groupByDay(visibleTasks)).map(([day, dayTasks]) => (
           <div key={day} className="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
             <div className="px-4 py-2 bg-stone-50 border-b border-stone-200">
               <p className="text-xs font-medium text-stone-500 capitalize">{day}</p>

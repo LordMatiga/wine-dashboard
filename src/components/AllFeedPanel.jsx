@@ -30,7 +30,7 @@ function groupByDay(items) {
   return groups
 }
 
-export default function AllFeedPanel({ onSelectOrder, onSelectTask, search = '', statusFilter = 'Tous', dateFrom = '', dateTo = '' }) {
+export default function AllFeedPanel({ onSelectOrder, onSelectTask, search = '', statusFilter = 'Tous', typeFilter = 'Tous', dateFrom = '', dateTo = '' }) {
   const [items, setItems] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -61,6 +61,10 @@ export default function AllFeedPanel({ onSelectOrder, onSelectTask, search = '',
       const text = item._source === 'order' ? item.transcription : item.description
       if (q && ![item.client_name, item.supplier_name, text].some(f => (f ?? '').toLowerCase().includes(q))) return false
       if (statusFilter !== 'Tous' && item.status !== statusFilter) return false
+      if (typeFilter && typeFilter !== 'Tous') {
+        if (typeFilter === 'commande') { if (item._source !== 'order') return false }
+        else { if (item._source !== 'task' || item.type !== typeFilter) return false }
+      }
       if (dateFrom || dateTo) {
         const d = new Date(item.created_at)
         if (dateFrom && d < new Date(dateFrom)) return false
@@ -68,7 +72,7 @@ export default function AllFeedPanel({ onSelectOrder, onSelectTask, search = '',
       }
       return true
     })
-  }, [items, search, statusFilter, dateFrom, dateTo])
+  }, [items, search, statusFilter, typeFilter, dateFrom, dateTo])
 
   if (loading) return <p className="text-xs text-stone-400 text-center py-16">Chargement...</p>
 
