@@ -124,8 +124,8 @@ export default async function handler(req, res) {
           status: 'Entrante',
         }),
       })
-      const [created] = await insertRes.json()
-      createdId = created?.id ?? null
+      const ordersData = await insertRes.json()
+      createdId = Array.isArray(ordersData) ? (ordersData[0]?.id ?? null) : null
       createdTable = 'orders'
       // notifications temporairement désactivées
       // fetch(`${SUPABASE_URL}/functions/v1/send-push`, {
@@ -147,8 +147,8 @@ export default async function handler(req, res) {
           status: 'Entrante',
         }),
       })
-      const [created] = await insertRes.json()
-      createdId = created?.id ?? null
+      const tasksData = await insertRes.json()
+      createdId = Array.isArray(tasksData) ? (tasksData[0]?.id ?? null) : null
       createdTable = 'tasks'
     }
 
