@@ -27,7 +27,7 @@ const TYPE_LABELS = {
   autre: 'Autre',
 }
 
-export default function DocumentsPanel() {
+export default function DocumentsPanel({ onSelectOrder, onSelectTask }) {
   const [docs, setDocs] = useState([])
   const [loading, setLoading] = useState(true)
   const [confirmDelete, setConfirmDelete] = useState(null)
@@ -40,7 +40,7 @@ export default function DocumentsPanel() {
     setLoading(true)
     const { data } = await supabase
       .from('documents')
-      .select('*, orders(client_name), tasks(client_name, type)')
+      .select('*, orders(*), tasks(*)')
       .order('created_at', { ascending: false })
     setDocs(data ?? [])
     setLoading(false)
@@ -124,14 +124,14 @@ export default function DocumentsPanel() {
               </a>
               <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
                 {linkedLabel && (
-                  <span className="text-xs text-stone-500 bg-stone-100 px-1.5 py-0.5 rounded">
-                    {linkedLabel}
-                  </span>
+                  <button
+                    onClick={() => doc.orders ? onSelectOrder?.(doc.orders) : onSelectTask?.(doc.tasks)}
+                    className="text-xs text-[#2d4a6b] bg-blue-50 px-1.5 py-0.5 rounded hover:bg-blue-100 transition-colors font-medium"
+                  >
+                    {linkedLabel} — {linkedClient}
+                  </button>
                 )}
-                {linkedClient && (
-                  <span className="text-xs text-stone-500">{linkedClient}</span>
-                )}
-                {!linkedLabel && !linkedClient && (
+                {!linkedLabel && (
                   <span className="text-xs text-stone-400">Non lié</span>
                 )}
               </div>

@@ -224,7 +224,10 @@ export default function App() {
 
         {activeTab === 'documents' && (
           <div className="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
-            <DocumentsPanel />
+            <DocumentsPanel
+              onSelectOrder={setEditingOrder}
+              onSelectTask={setEditingTask}
+            />
           </div>
         )}
 
