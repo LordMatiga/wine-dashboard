@@ -28,6 +28,35 @@ async function transcribeAudio(audioBase64, mimeType) {
   return data.text
 }
 
+async function splitIntents(text) {
+  const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${GROQ_API_KEY}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'llama-3.3-70b-versatile',
+      messages: [
+        {
+          role: 'system',
+          content: `Tu analyses un message professionnel pour détecter s'il contient plusieurs demandes distinctes et indépendantes.
+Une demande distincte = une action qui peut être traitée séparément (passer une commande, préparer une fiche client, signaler un problème logistique, envoyer une facture, etc.).
+Si le message contient UNE SEULE demande : {"segments":["<texte complet>"]}
+Si le message contient PLUSIEURS demandes distinctes, découpe en segments autonomes (chaque segment doit être compréhensible seul) : {"segments":["demande 1 avec contexte","demande 2 avec contexte"]}
+Réponds uniquement en JSON PUR.`,
+        },
+        { role: 'user', content: text },
+      ],
+      response_format: { type: 'json_object' },
+    }),
+  })
+  const data = await res.json()
+  try {
+    const parsed = JSON.parse(data.choices[0].message.content)
+    return Array.isArray(parsed.segments) && parsed.segments.length > 0 ? parsed.segments : [text]
+  } catch {
+    return [text]
+  }
+}
+
 async function categorize(text) {
   const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
     method: 'POST',
@@ -106,62 +135,63 @@ export default async function handler(req, res) {
       return
     }
 
-    const result = await categorize(transcript)
+    const segments = await splitIntents(transcript)
+    const items = []
 
-    let createdId = null
-    let createdTable = null
+    for (const segment of segments) {
+      const result = await categorize(segment)
+      let createdId = null
+      let createdTable = null
 
-    if (result.type === 'commande') {
-      const insertRes = await fetch(`${SUPABASE_URL}/rest/v1/orders`, {
-        method: 'POST',
-        headers: SUPABASE_HEADERS,
-        body: JSON.stringify({
-          client_name: result.client ?? null,
-          supplier_name: result.fournisseur ?? null,
-          transcription: result.description ?? transcript,
-          raw_transcription: transcript,
-          urgent: result.urgent ?? false,
-          status: 'Entrante',
-        }),
+      if (result.type === 'commande') {
+        const insertRes = await fetch(`${SUPABASE_URL}/rest/v1/orders`, {
+          method: 'POST',
+          headers: SUPABASE_HEADERS,
+          body: JSON.stringify({
+            client_name: result.client ?? null,
+            supplier_name: result.fournisseur ?? null,
+            transcription: result.description ?? segment,
+            raw_transcription: transcript,
+            urgent: result.urgent ?? false,
+            status: 'Entrante',
+          }),
+        })
+        const ordersData = await insertRes.json()
+        createdId = Array.isArray(ordersData) ? (ordersData[0]?.id ?? null) : null
+        createdTable = 'orders'
+        // notifications temporairement désactivées
+        // fetch(`${SUPABASE_URL}/functions/v1/send-push`, { ... }).catch(() => {})
+      } else {
+        const insertRes = await fetch(`${SUPABASE_URL}/rest/v1/tasks`, {
+          method: 'POST',
+          headers: SUPABASE_HEADERS,
+          body: JSON.stringify({
+            client_name: result.client ?? null,
+            supplier_name: result.fournisseur ?? null,
+            description: result.description ?? null,
+            raw_transcription: transcript,
+            type: result.type ?? 'autre',
+            urgent: result.urgent ?? false,
+            status: 'Entrante',
+          }),
+        })
+        const tasksData = await insertRes.json()
+        createdId = Array.isArray(tasksData) ? (tasksData[0]?.id ?? null) : null
+        createdTable = 'tasks'
+      }
+
+      items.push({
+        type: result.type,
+        client: result.client ?? null,
+        fournisseur: result.fournisseur ?? null,
+        description: result.description ?? null,
+        urgent: result.urgent ?? false,
+        id: createdId,
+        table: createdTable,
       })
-      const ordersData = await insertRes.json()
-      createdId = Array.isArray(ordersData) ? (ordersData[0]?.id ?? null) : null
-      createdTable = 'orders'
-      // notifications temporairement désactivées
-      // fetch(`${SUPABASE_URL}/functions/v1/send-push`, {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json', apikey: SUPABASE_SERVICE_KEY },
-      //   body: JSON.stringify({ status: 'Entrante', client_name: result.client ?? null, type: 'commande' }),
-      // }).catch(() => {})
-    } else {
-      const insertRes = await fetch(`${SUPABASE_URL}/rest/v1/tasks`, {
-        method: 'POST',
-        headers: SUPABASE_HEADERS,
-        body: JSON.stringify({
-          client_name: result.client ?? null,
-          supplier_name: result.fournisseur ?? null,
-          description: result.description ?? null,
-          raw_transcription: transcript,
-          type: result.type ?? 'autre',
-          urgent: result.urgent ?? false,
-          status: 'Entrante',
-        }),
-      })
-      const tasksData = await insertRes.json()
-      createdId = Array.isArray(tasksData) ? (tasksData[0]?.id ?? null) : null
-      createdTable = 'tasks'
     }
 
-    res.status(200).json({
-      type: result.type,
-      client: result.client ?? null,
-      fournisseur: result.fournisseur ?? null,
-      description: result.description ?? null,
-      urgent: result.urgent ?? false,
-      transcript,
-      id: createdId,
-      table: createdTable,
-    })
+    res.status(200).json({ items, transcript })
   } catch (e) {
     console.error('voice-input error:', e)
     res.status(500).json({ error: e.message })

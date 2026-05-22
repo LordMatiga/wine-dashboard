@@ -220,39 +220,42 @@ export default function VoiceInput() {
                         <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                       </svg>
                     </div>
-                    <span className="text-sm font-semibold text-stone-800">Enregistré</span>
-                    {result.urgent && <span className="w-2 h-2 rounded-full bg-red-500" />}
+                    <span className="text-sm font-semibold text-stone-800">
+                      {result.items?.length > 1 ? `${result.items.length} entrées enregistrées` : 'Enregistré'}
+                    </span>
                   </div>
 
-                  <div className="bg-stone-100 rounded-xl px-4 py-3 space-y-1.5">
-                    <div className="flex items-center gap-2">
-                      <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${
-                        result.type === 'commande' ? 'bg-[#2d4a6b]/10 text-[#2d4a6b]' :
-                        result.type === 'fiche_client' ? 'bg-purple-100 text-purple-800' :
-                        result.type === 'logistique' ? 'bg-orange-100 text-orange-800' :
-                        result.type === 'compta' ? 'bg-blue-100 text-blue-800' :
-                        result.type === 'tarif' ? 'bg-teal-100 text-teal-800' :
-                        'bg-stone-200 text-stone-600'
-                      }`}>
-                        {TYPE_LABELS[result.type] ?? result.type}
-                      </span>
-                      {result.client && <span className="text-sm font-medium text-stone-700">{result.client}</span>}
+                  {result.items?.map((item, i) => (
+                    <div key={i} className="bg-stone-100 rounded-xl px-4 py-3 space-y-1.5">
+                      <div className="flex items-center gap-2">
+                        <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${
+                          item.type === 'commande' ? 'bg-[#2d4a6b]/10 text-[#2d4a6b]' :
+                          item.type === 'fiche_client' ? 'bg-purple-100 text-purple-800' :
+                          item.type === 'logistique' ? 'bg-orange-100 text-orange-800' :
+                          item.type === 'compta' ? 'bg-blue-100 text-blue-800' :
+                          item.type === 'tarif' ? 'bg-teal-100 text-teal-800' :
+                          'bg-stone-200 text-stone-600'
+                        }`}>
+                          {TYPE_LABELS[item.type] ?? item.type}
+                        </span>
+                        {item.client && <span className="text-sm font-medium text-stone-700">{item.client}</span>}
+                        {item.urgent && <span className="w-2 h-2 rounded-full bg-red-500 flex-shrink-0" />}
+                      </div>
+                      {item.fournisseur && (
+                        <p className="text-xs text-stone-500">Fournisseur : {item.fournisseur}</p>
+                      )}
+                      {item.description && (
+                        <p className="text-xs text-stone-600 leading-relaxed">{item.description}</p>
+                      )}
+                      {item.id && (
+                        <DocumentUpload
+                          orderId={item.table === 'orders' ? item.id : null}
+                          taskId={item.table === 'tasks' ? item.id : null}
+                          onUploaded={() => {}}
+                        />
+                      )}
                     </div>
-                    {result.fournisseur && (
-                      <p className="text-xs text-stone-500">Fournisseur : {result.fournisseur}</p>
-                    )}
-                    {result.description && (
-                      <p className="text-xs text-stone-600 leading-relaxed">{result.description}</p>
-                    )}
-                  </div>
-
-                  {result.id && (
-                    <DocumentUpload
-                      orderId={result.table === 'orders' ? result.id : null}
-                      taskId={result.table === 'tasks' ? result.id : null}
-                      onUploaded={() => {}}
-                    />
-                  )}
+                  ))}
 
                   <button
                     onClick={reset}
