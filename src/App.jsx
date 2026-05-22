@@ -13,6 +13,7 @@ import TaskTable from './components/TaskTable.jsx'
 import EditTaskModal from './components/EditTaskModal.jsx'
 import UrgentPanel from './components/UrgentPanel.jsx'
 import AllFeedPanel from './components/AllFeedPanel.jsx'
+import VoiceInput from './components/VoiceInput.jsx'
 
 export default function App() {
   const [session, setSession] = useState(undefined)
@@ -245,6 +246,8 @@ export default function App() {
           onRoleSet={role => setUserRole(role)}
         />
       )}
+
+      <VoiceInput />
     </div>
   )
 }

@@ -5,7 +5,19 @@
       "Bash(node -e ' *)",
       "Bash(npm install *)",
       "Bash(npm run *)",
-      "Bash(mkdir -p \"/Users/timotheecoly/Enregistrer commande/supabase/functions/receive-task\")"
+      "Bash(mkdir -p \"/Users/timotheecoly/Enregistrer commande/supabase/functions/receive-task\")",
+      "Bash(mkdir -p \"/Users/timotheecoly/Enregistrer commande/supabase/functions/telegram-bot\")",
+      "Bash(supabase functions *)",
+      "Bash(cat .supabase/config.json)",
+      "Bash(cat supabase/.temp/project-ref)",
+      "Bash(ls -la .supabase/)",
+      "Bash(supabase projects *)",
+      "Bash(supabase link *)",
+      "Bash(mkdir -p \"/Users/timotheecoly/Enregistrer commande/api\")",
+      "Bash(vercel --version)",
+      "Bash(vercel integration *)",
+      "Bash(vercel --prod)",
+      "Bash(vercel env *)"
     ]
   }
 }
