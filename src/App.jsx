@@ -135,7 +135,7 @@ export default function App() {
           {[
             { key: 'tout', label: 'Tout' },
             { key: 'urgent', label: 'Urgent' },
-            { key: 'notifications', label: 'Notifs' },
+            { key: 'notifications', label: 'Notification' },
             { key: 'commandes', label: 'Commandes' },
             { key: 'taches', label: 'Tâches' },
             { key: 'documents', label: 'Documents' },
