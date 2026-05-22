@@ -3,6 +3,7 @@ import AutocompleteInput from './AutocompleteInput.jsx'
 import OrderHistory from './OrderHistory.jsx'
 import DocumentsList from './DocumentsList.jsx'
 import DocumentUpload from './DocumentUpload.jsx'
+import ChatThread from './ChatThread.jsx'
 
 const STATUSES = ['Entrante', 'À traiter', 'Traitée']
 
@@ -193,6 +194,14 @@ export default function EditModal({ order, onSave, onDelete, onClose }) {
             </div>
           )}
         </div>
+
+        {/* Chat */}
+        {!showHistory && order.id && (
+          <div className="border-t border-stone-200">
+            <p className="text-xs font-medium text-stone-500 px-5 pt-3 pb-1">Messages</p>
+            <ChatThread orderId={order.id} />
+          </div>
+        )}
 
         {/* Footer — visible uniquement en mode formulaire */}
         {!showHistory && (

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import AutocompleteInput from './AutocompleteInput.jsx'
 import DocumentsList from './DocumentsList.jsx'
 import DocumentUpload from './DocumentUpload.jsx'
+import ChatThread from './ChatThread.jsx'
 
 const TASK_TYPES = [
   { value: 'fiche_client', label: 'Fiche client' },
@@ -207,6 +208,14 @@ export default function EditTaskModal({ task, onSave, onDelete, onClose }) {
             )}
           </div>
         </div>
+
+        {/* Chat */}
+        {task.id && (
+          <div className="border-t border-stone-200">
+            <p className="text-xs font-medium text-stone-500 px-5 pt-3 pb-1">Messages</p>
+            <ChatThread taskId={task.id} />
+          </div>
+        )}
 
         <div className="flex items-center justify-between gap-3 px-5 py-4 border-t border-stone-200">
           {task.id ? (
