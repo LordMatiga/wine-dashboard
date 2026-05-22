@@ -132,10 +132,10 @@ export default function VoiceInput() {
       {/* Modal */}
       {open && (
         <div
-          className="fixed inset-0 z-50 flex items-end justify-center bg-stone-900/50 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/50 backdrop-blur-sm"
           onClick={e => { if (e.target === e.currentTarget) close() }}
         >
-          <div className="bg-stone-50 rounded-t-2xl w-full max-w-lg shadow-xl">
+          <div className="bg-stone-50 rounded-2xl w-full max-w-lg shadow-xl">
             {/* Header */}
             <div className="flex items-center justify-between px-5 py-4 border-b border-stone-200">
               <h2 className="text-sm font-semibold text-stone-800">Nouvelle saisie</h2>
