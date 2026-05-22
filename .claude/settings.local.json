@@ -17,7 +17,10 @@
       "Bash(vercel --version)",
       "Bash(vercel integration *)",
       "Bash(vercel --prod)",
-      "Bash(vercel env *)"
+      "Bash(vercel env *)",
+      "mcp__8bf94227-0dc3-4e01-852b-9bb9fd40af19__list_teams",
+      "mcp__8bf94227-0dc3-4e01-852b-9bb9fd40af19__deploy_to_vercel",
+      "mcp__8bf94227-0dc3-4e01-852b-9bb9fd40af19__list_projects"
     ]
   }
 }
