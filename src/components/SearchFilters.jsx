@@ -21,29 +21,31 @@ export default function SearchFilters({ search, onSearch, statusFilter, onStatus
           placeholder="Client, fournisseur, mot-clé..."
           className="flex-1 px-3 py-1.5 text-sm rounded-lg border border-stone-200 focus:outline-none focus:ring-2 focus:ring-[#c5a059]/20 focus:border-[#c5a059] placeholder-stone-400"
         />
-        <div className="flex gap-1.5 flex-wrap items-center">
+        <div className="flex flex-col gap-1.5">
           <select
             value={typeFilter}
             onChange={e => onTypeFilter?.(e.target.value)}
-            className="px-2.5 py-1 rounded-lg text-xs font-medium border border-stone-200 bg-white text-stone-600 focus:outline-none focus:ring-2 focus:ring-[#c5a059]/20 focus:border-[#c5a059] cursor-pointer"
+            className="w-full px-2.5 py-1 rounded-lg text-xs font-medium border border-stone-200 bg-white text-stone-600 focus:outline-none focus:ring-2 focus:ring-[#c5a059]/20 focus:border-[#c5a059] cursor-pointer"
           >
             {TYPE_OPTIONS.map(o => (
               <option key={o.value} value={o.value}>{o.label}</option>
             ))}
           </select>
-          {STATUS_FILTERS.map(f => (
-            <button
-              key={f}
-              onClick={() => onStatusFilter(f)}
-              className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-colors ${
-                statusFilter === f
-                  ? 'bg-[#c5a059] text-white'
-                  : 'bg-stone-200 text-stone-600 hover:bg-stone-300'
-              }`}
-            >
-              {f}
-            </button>
-          ))}
+          <div className="grid grid-cols-4 gap-1">
+            {STATUS_FILTERS.map(f => (
+              <button
+                key={f}
+                onClick={() => onStatusFilter(f)}
+                className={`py-1 rounded-lg text-xs font-medium transition-colors text-center ${
+                  statusFilter === f
+                    ? 'bg-[#c5a059] text-white'
+                    : 'bg-stone-200 text-stone-600 hover:bg-stone-300'
+                }`}
+              >
+                {f}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
       <div className="flex gap-2 items-center flex-wrap">

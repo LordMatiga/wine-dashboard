@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase.js'
+import DocumentUpload from './DocumentUpload.jsx'
 
 function getPublicUrl(path) {
   const { data } = supabase.storage.from('documents').getPublicUrl(path)
@@ -52,24 +53,38 @@ export default function DocumentsPanel() {
     fetchDocs()
   }
 
+  const header = (
+    <div className="flex items-center justify-between px-4 py-3 border-b border-stone-100">
+      <span className="text-sm font-medium text-stone-700">Documents</span>
+      <DocumentUpload onUploaded={fetchDocs} />
+    </div>
+  )
+
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <div className="w-6 h-6 border-2 border-[#2d4a6b] border-t-transparent rounded-full animate-spin" />
+      <div>
+        {header}
+        <div className="flex items-center justify-center py-12">
+          <div className="w-6 h-6 border-2 border-[#2d4a6b] border-t-transparent rounded-full animate-spin" />
+        </div>
       </div>
     )
   }
 
   if (!docs.length) {
     return (
-      <div className="text-center py-12 text-stone-500 text-sm">
-        Aucun document enregistré.
+      <div>
+        {header}
+        <div className="text-center py-12 text-stone-500 text-sm">
+          Aucun document enregistré.
+        </div>
       </div>
     )
   }
 
   return (
     <div className="divide-y divide-stone-100">
+      {header}
       {docs.map(doc => {
         const url = getPublicUrl(doc.storage_path)
         const img = isImage(doc.mime_type)
