@@ -166,11 +166,12 @@ export default async function handler(req, res) {
           status: 'Entrante',
         }),
       })
-      fetch(`${SUPABASE_URL}/functions/v1/send-push`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', apikey: SUPABASE_SERVICE_KEY },
-        body: JSON.stringify({ status: 'Entrante', client_name: result.client ?? null, type: 'commande' }),
-      }).catch(() => {})
+      // notifications temporairement désactivées
+      // fetch(`${SUPABASE_URL}/functions/v1/send-push`, {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json', apikey: SUPABASE_SERVICE_KEY },
+      //   body: JSON.stringify({ status: 'Entrante', client_name: result.client ?? null, type: 'commande' }),
+      // }).catch(() => {})
       await sendMessage(chatId, `✅ Commande enregistrée${urgentTag}\n<b>Commande${clientDisplay}</b>\n${result.description ?? ''}`)
     } else {
       await fetch(`${SUPABASE_URL}/rest/v1/tasks`, {

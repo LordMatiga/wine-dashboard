@@ -127,11 +127,12 @@ export default async function handler(req, res) {
       const [created] = await insertRes.json()
       createdId = created?.id ?? null
       createdTable = 'orders'
-      fetch(`${SUPABASE_URL}/functions/v1/send-push`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', apikey: SUPABASE_SERVICE_KEY },
-        body: JSON.stringify({ status: 'Entrante', client_name: result.client ?? null, type: 'commande' }),
-      }).catch(() => {})
+      // notifications temporairement désactivées
+      // fetch(`${SUPABASE_URL}/functions/v1/send-push`, {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json', apikey: SUPABASE_SERVICE_KEY },
+      //   body: JSON.stringify({ status: 'Entrante', client_name: result.client ?? null, type: 'commande' }),
+      // }).catch(() => {})
     } else {
       const insertRes = await fetch(`${SUPABASE_URL}/rest/v1/tasks`, {
         method: 'POST',
