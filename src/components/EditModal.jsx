@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import AutocompleteInput from './AutocompleteInput.jsx'
 import OrderHistory from './OrderHistory.jsx'
+import DocumentsList from './DocumentsList.jsx'
+import DocumentUpload from './DocumentUpload.jsx'
 
 const STATUSES = ['Entrante', 'À traiter', 'Traitée']
 
@@ -10,7 +12,7 @@ const STATUS_ACTIVE = {
   'Traitée': 'bg-emerald-50 text-emerald-800 border-emerald-300',
 }
 
-export default function EditModal({ order, onSave, onClose }) {
+export default function EditModal({ order, onSave, onDelete, onClose }) {
   const [form, setForm] = useState({
     client_name: order.client_name ?? '',
     supplier_name: order.supplier_name ?? '',
@@ -22,6 +24,8 @@ export default function EditModal({ order, onSave, onClose }) {
   const [showHistory, setShowHistory] = useState(false)
   const [resetStatus, setResetStatus] = useState(true)
   const [userModified, setUserModified] = useState(false)
+  const [confirmDelete, setConfirmDelete] = useState(false)
+  const [docRefresh, setDocRefresh] = useState(0)
 
   function set(key, value) {
     setForm(prev => ({ ...prev, [key]: value }))
@@ -128,6 +132,14 @@ export default function EditModal({ order, onSave, onClose }) {
               </div>
 
               <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-xs font-medium text-stone-700">Documents</label>
+                  <DocumentUpload orderId={order.id} onUploaded={() => setDocRefresh(n => n + 1)} />
+                </div>
+                <DocumentsList orderId={order.id} refreshKey={docRefresh} />
+              </div>
+
+              <div>
                 <label className="block text-xs font-medium text-stone-700 mb-2">Statut</label>
                 <div className="flex gap-2">
                   {STATUSES.map(s => (
@@ -166,20 +178,26 @@ export default function EditModal({ order, onSave, onClose }) {
 
         {/* Footer — visible uniquement en mode formulaire */}
         {!showHistory && (
-          <div className="flex items-center justify-end gap-3 px-5 py-4 border-t border-stone-200">
-            <button
-              onClick={onClose}
-              className="px-4 py-2 rounded-lg text-sm font-medium border border-stone-200 text-stone-600 hover:bg-stone-100 transition-colors"
-            >
-              Annuler
-            </button>
-            <button
-              onClick={handleSave}
-              disabled={saving}
-              className={`px-4 py-2 rounded-lg text-sm font-medium text-white bg-[#c5a059] hover:bg-[#1e3349] transition-colors ${saving ? 'opacity-60 cursor-not-allowed' : ''}`}
-            >
-              {saving ? 'Enregistrement…' : 'Enregistrer'}
-            </button>
+          <div className="flex items-center justify-between gap-3 px-5 py-4 border-t border-stone-200">
+            {confirmDelete ? (
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-stone-500">Supprimer ?</span>
+                <button onClick={() => setConfirmDelete(false)} className="px-3 py-1.5 rounded-lg text-xs font-medium border border-stone-200 text-stone-600 hover:bg-stone-100 transition-colors">Non</button>
+                <button onClick={() => onDelete(order.id)} className="px-3 py-1.5 rounded-lg text-xs font-medium bg-red-500 text-white hover:bg-red-600 transition-colors">Oui, supprimer</button>
+              </div>
+            ) : (
+              <button onClick={() => setConfirmDelete(true)} className="px-3 py-1.5 rounded-lg text-xs font-medium text-red-500 hover:bg-red-50 border border-red-200 transition-colors">
+                Supprimer
+              </button>
+            )}
+            <div className="flex items-center gap-2">
+              <button onClick={onClose} className="px-4 py-2 rounded-lg text-sm font-medium border border-stone-200 text-stone-600 hover:bg-stone-100 transition-colors">
+                Annuler
+              </button>
+              <button onClick={handleSave} disabled={saving} className={`px-4 py-2 rounded-lg text-sm font-medium text-white bg-[#c5a059] hover:bg-[#1e3349] transition-colors ${saving ? 'opacity-60 cursor-not-allowed' : ''}`}>
+                {saving ? 'Enregistrement…' : 'Enregistrer'}
+              </button>
+            </div>
           </div>
         )}
       </div>

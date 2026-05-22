@@ -56,6 +56,10 @@ serve(async (req) => {
     targetLabel = "assistant"
     title = `🔔 ${typeLabel} à traiter`
     body = `${client_name} nécessite une action`
+  } else if (status === "Entrante") {
+    targetLabel = "assistant"
+    title = `🆕 Nouvelle ${typeLabel}`
+    body = client_name ?? "Nouvelle entrée"
   }
 
   const targets = subs.filter((s: any) => s.user_label === targetLabel)

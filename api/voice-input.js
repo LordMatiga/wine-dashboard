@@ -6,7 +6,7 @@ const SUPABASE_HEADERS = {
   'Content-Type': 'application/json',
   apikey: SUPABASE_SERVICE_KEY,
   Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`,
-  Prefer: 'return=minimal',
+  Prefer: 'return=representation',
 }
 
 async function transcribeAudio(audioBase64, mimeType) {
@@ -108,8 +108,11 @@ export default async function handler(req, res) {
 
     const result = await categorize(transcript)
 
+    let createdId = null
+    let createdTable = null
+
     if (result.type === 'commande') {
-      await fetch(`${SUPABASE_URL}/rest/v1/orders`, {
+      const insertRes = await fetch(`${SUPABASE_URL}/rest/v1/orders`, {
         method: 'POST',
         headers: SUPABASE_HEADERS,
         body: JSON.stringify({
@@ -120,8 +123,16 @@ export default async function handler(req, res) {
           status: 'Entrante',
         }),
       })
+      const [created] = await insertRes.json()
+      createdId = created?.id ?? null
+      createdTable = 'orders'
+      fetch(`${SUPABASE_URL}/functions/v1/send-push`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', apikey: SUPABASE_SERVICE_KEY },
+        body: JSON.stringify({ status: 'Entrante', client_name: result.client ?? null, type: 'commande' }),
+      }).catch(() => {})
     } else {
-      await fetch(`${SUPABASE_URL}/rest/v1/tasks`, {
+      const insertRes = await fetch(`${SUPABASE_URL}/rest/v1/tasks`, {
         method: 'POST',
         headers: SUPABASE_HEADERS,
         body: JSON.stringify({
@@ -133,6 +144,9 @@ export default async function handler(req, res) {
           status: 'Entrante',
         }),
       })
+      const [created] = await insertRes.json()
+      createdId = created?.id ?? null
+      createdTable = 'tasks'
     }
 
     res.status(200).json({
@@ -142,6 +156,8 @@ export default async function handler(req, res) {
       description: result.description ?? null,
       urgent: result.urgent ?? false,
       transcript,
+      id: createdId,
+      table: createdTable,
     })
   } catch (e) {
     console.error('voice-input error:', e)

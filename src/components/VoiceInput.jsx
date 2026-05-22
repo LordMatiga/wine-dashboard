@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react'
+import DocumentUpload from './DocumentUpload.jsx'
 
 const TYPE_LABELS = {
   commande: 'Commande',
@@ -123,8 +124,8 @@ export default function VoiceInput() {
         className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-[#2d4a6b] text-white shadow-lg flex items-center justify-center hover:bg-[#1e3349] active:scale-95 transition-all"
         title="Nouvelle saisie"
       >
-        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z" />
+        <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
         </svg>
       </button>
 
@@ -244,6 +245,14 @@ export default function VoiceInput() {
                       <p className="text-xs text-stone-600 leading-relaxed">{result.description}</p>
                     )}
                   </div>
+
+                  {result.id && (
+                    <DocumentUpload
+                      orderId={result.table === 'orders' ? result.id : null}
+                      taskId={result.table === 'tasks' ? result.id : null}
+                      onUploaded={() => {}}
+                    />
+                  )}
 
                   <button
                     onClick={reset}

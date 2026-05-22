@@ -14,6 +14,7 @@ import EditTaskModal from './components/EditTaskModal.jsx'
 import UrgentPanel from './components/UrgentPanel.jsx'
 import AllFeedPanel from './components/AllFeedPanel.jsx'
 import VoiceInput from './components/VoiceInput.jsx'
+import DocumentsPanel from './components/DocumentsPanel.jsx'
 
 export default function App() {
   const [session, setSession] = useState(undefined)
@@ -94,6 +95,11 @@ export default function App() {
     }
   }
 
+  async function handleDeleteOrder(id) {
+    const { error } = await supabase.from('orders').delete().eq('id', id)
+    if (error) { setError(error.message) } else { setEditingOrder(null); fetchOrders() }
+  }
+
   async function handleUpdateTask(id, updates) {
     let error
     if (id) {
@@ -111,6 +117,11 @@ export default function App() {
     }
   }
 
+  async function handleDeleteTask(id) {
+    const { error } = await supabase.from('tasks').delete().eq('id', id)
+    if (error) { setError(error.message) } else { setEditingTask(null) }
+  }
+
   if (session === undefined) return null
   if (!session) return <LoginPage />
 
@@ -119,12 +130,13 @@ export default function App() {
       <Header onNotifClick={() => setShowPushSetup(true)} onLogout={() => supabase.auth.signOut()} connected={connected} />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-2">
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-1">
+        <div className="grid grid-cols-3 sm:grid-cols-6 gap-1">
           {[
             { key: 'tout', label: 'Tout' },
             { key: 'urgent', label: 'Urgent' },
             { key: 'commandes', label: 'Commandes' },
             { key: 'taches', label: 'Tâches' },
+            { key: 'documents', label: 'Documents' },
             { key: 'notifications', label: 'Notifications' },
           ].map(tab => (
             <button
@@ -205,6 +217,12 @@ export default function App() {
           </div>
         )}
 
+        {activeTab === 'documents' && (
+          <div className="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
+            <DocumentsPanel />
+          </div>
+        )}
+
         {activeTab === 'notifications' && (
           <div className="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
             <NotificationsPanel
@@ -228,6 +246,7 @@ export default function App() {
         <EditModal
           order={editingOrder}
           onSave={handleUpdate}
+          onDelete={handleDeleteOrder}
           onClose={() => setEditingOrder(null)}
         />
       )}
@@ -236,6 +255,7 @@ export default function App() {
         <EditTaskModal
           task={editingTask}
           onSave={handleUpdateTask}
+          onDelete={handleDeleteTask}
           onClose={() => setEditingTask(null)}
         />
       )}
