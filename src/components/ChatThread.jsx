@@ -13,6 +13,7 @@ export default function ChatThread({ orderId, taskId }) {
   const [messages, setMessages] = useState([])
   const [text, setText] = useState('')
   const [sending, setSending] = useState(false)
+  const [error, setError] = useState(null)
   const bottomRef = useRef(null)
   const sender = localStorage.getItem('user_role') ?? 'Opérateur'
 
@@ -39,22 +40,24 @@ export default function ChatThread({ orderId, taskId }) {
       .order('created_at', { ascending: true })
     if (orderId) query = query.eq('order_id', orderId)
     else query = query.eq('task_id', taskId)
-    const { data } = await query
-    setMessages(data ?? [])
+    const { data, error } = await query
+    if (error) setError('Lecture : ' + error.message)
+    else setMessages(data ?? [])
   }
 
   async function send() {
     if (!text.trim()) return
     setSending(true)
-    await supabase.from('comments').insert({
+    setError(null)
+    const { error } = await supabase.from('comments').insert({
       order_id: orderId ?? null,
       task_id: taskId ?? null,
       content: text.trim(),
       sender,
     })
-    setText('')
+    if (error) setError('Envoi : ' + error.message)
+    else { setText(''); fetchMessages() }
     setSending(false)
-    fetchMessages()
   }
 
   function handleKey(e) {
@@ -69,7 +72,10 @@ export default function ChatThread({ orderId, taskId }) {
   return (
     <div className="flex flex-col">
       <div className="max-h-64 overflow-y-auto px-4 py-3 space-y-2">
-        {messages.length === 0 && (
+        {error && (
+          <p className="text-xs text-red-500 bg-red-50 rounded-lg px-3 py-2">{error}</p>
+        )}
+        {messages.length === 0 && !error && (
           <p className="text-xs text-stone-400 text-center py-4">Aucun message pour l'instant.</p>
         )}
         {messages.map(msg => {
