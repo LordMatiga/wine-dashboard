@@ -181,6 +181,7 @@ export default async function handler(req, res) {
           client_name: result.client ?? null,
           supplier_name: result.fournisseur ?? null,
           description: result.description ?? null,
+          raw_transcription: text,
           type: result.type ?? 'autre',
           urgent: result.urgent ?? false,
           status: 'Entrante',

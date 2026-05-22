@@ -29,6 +29,7 @@ export default function EditTaskModal({ task, onSave, onDelete, onClose }) {
     status: task.status ?? 'Entrante',
   })
   const [saving, setSaving] = useState(false)
+  const [showRaw, setShowRaw] = useState(false)
   const [resetStatus, setResetStatus] = useState(true)
   const [userModified, setUserModified] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
@@ -123,7 +124,23 @@ export default function EditTaskModal({ task, onSave, onDelete, onClose }) {
           )}
 
           <div>
-            <label className="block text-xs font-medium text-stone-700 mb-1">Description</label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-xs font-medium text-stone-700">Description</label>
+              {task.raw_transcription && (
+                <button
+                  type="button"
+                  onClick={() => setShowRaw(v => !v)}
+                  className="text-xs text-[#2d4a6b] hover:underline"
+                >
+                  {showRaw ? 'Masquer' : 'Voir le texte complet'}
+                </button>
+              )}
+            </div>
+            {showRaw && task.raw_transcription && (
+              <div className="mb-2 px-3 py-2 text-sm text-stone-600 bg-stone-100 rounded-lg border border-stone-200 whitespace-pre-wrap">
+                {task.raw_transcription}
+              </div>
+            )}
             <textarea
               rows={4}
               value={form.description}
