@@ -33,12 +33,12 @@ export default function ChatThread({ orderId, taskId }) {
   }, [messages])
 
   async function fetchMessages() {
-    const query = supabase
+    let query = supabase
       .from('comments')
       .select('*')
       .order('created_at', { ascending: true })
-    if (orderId) query.eq('order_id', orderId)
-    else query.eq('task_id', taskId)
+    if (orderId) query = query.eq('order_id', orderId)
+    else query = query.eq('task_id', taskId)
     const { data } = await query
     setMessages(data ?? [])
   }
@@ -54,6 +54,7 @@ export default function ChatThread({ orderId, taskId }) {
     })
     setText('')
     setSending(false)
+    fetchMessages()
   }
 
   function handleKey(e) {
