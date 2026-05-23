@@ -51,7 +51,16 @@ function SkeletonRow() {
   )
 }
 
-export default function TaskTable({ onEdit, onNew, typeFilter = 'Tous' }) {
+function MessageBadge({ count }) {
+  if (!count) return null
+  return (
+    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-[#c5a059] text-white">
+      💬 {count}
+    </span>
+  )
+}
+
+export default function TaskTable({ onEdit, onNew, typeFilter = 'Tous', commentCounts = {} }) {
   const [tasks, setTasks] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -132,6 +141,7 @@ export default function TaskTable({ onEdit, onNew, typeFilter = 'Tous' }) {
                   <div className="col-span-3 text-xs text-stone-500 line-clamp-2">{task.description ?? '—'}</div>
                   <div className="col-span-1"><StatusBadge status={task.status} /></div>
                   <div className="col-span-1 text-base">{task.urgent ? '🔴' : ''}</div>
+                  <div className="col-span-1"><MessageBadge count={commentCounts[task.id]} /></div>
                 </div>
                 <div className="sm:hidden flex items-center gap-3 px-4 py-3">
                   <div className="flex-1 min-w-0">
@@ -143,8 +153,9 @@ export default function TaskTable({ onEdit, onNew, typeFilter = 'Tous' }) {
                     <p className="text-xs text-stone-400 line-clamp-1">{task.description ?? ''}</p>
                     <p className="text-xs text-stone-400 mt-0.5">{formatDate(task.created_at)}</p>
                   </div>
-                  <div className="flex-shrink-0">
+                  <div className="flex-shrink-0 flex flex-col items-end gap-1">
                     <StatusBadge status={task.status} />
+                    <MessageBadge count={commentCounts[task.id]} />
                   </div>
                 </div>
               </div>

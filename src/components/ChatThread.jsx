@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { supabase } from '../lib/supabase.js'
+import { sendPushNotification } from '../lib/webpush.js'
 
 function formatTime(str) {
   return new Date(str).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
@@ -56,7 +57,11 @@ export default function ChatThread({ orderId, taskId }) {
       sender,
     })
     if (error) setError('Envoi : ' + error.message)
-    else { setText(''); fetchMessages() }
+    else {
+      setText('')
+      fetchMessages()
+      sendPushNotification('message', sender, 'chat').catch(() => {})
+    }
     setSending(false)
   }
 

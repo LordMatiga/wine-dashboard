@@ -32,6 +32,26 @@ export default function App() {
   const [typeFilter, setTypeFilter] = useState('Tous')
   const [userRole, setUserRole] = useState(() => localStorage.getItem('user_role') ?? null)
   const [connected, setConnected] = useState(false)
+  const [commentCounts, setCommentCounts] = useState({})
+
+  async function fetchCommentCounts() {
+    const { data } = await supabase.from('comments').select('order_id, task_id')
+    const counts = {}
+    data?.forEach(c => {
+      const id = c.order_id ?? c.task_id
+      if (id) counts[id] = (counts[id] ?? 0) + 1
+    })
+    setCommentCounts(counts)
+  }
+
+  useEffect(() => {
+    fetchCommentCounts()
+    const channel = supabase
+      .channel('comments-counts')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'comments' }, fetchCommentCounts)
+      .subscribe()
+    return () => supabase.removeChannel(channel)
+  }, [])
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => setSession(data.session))
@@ -191,7 +211,7 @@ export default function App() {
               </div>
             )}
 
-            <OrderTable orders={filteredOrders} loading={loading} onEdit={setEditingOrder} />
+            <OrderTable orders={filteredOrders} loading={loading} onEdit={setEditingOrder} commentCounts={commentCounts} />
 
             {!loading && (
               <p className="text-xs text-stone-500 text-right">
@@ -205,7 +225,7 @@ export default function App() {
         )}
 
         {activeTab === 'taches' && (
-          <TaskTable onEdit={setEditingTask} onNew={() => setEditingTask({})} typeFilter={typeFilter} />
+          <TaskTable onEdit={setEditingTask} onNew={() => setEditingTask({})} typeFilter={typeFilter} commentCounts={commentCounts} />
         )}
 
         {activeTab === 'urgent' && (

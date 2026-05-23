@@ -32,7 +32,16 @@ function SkeletonRow() {
   )
 }
 
-export default function OrderTable({ orders, loading, onEdit }) {
+function MessageBadge({ count }) {
+  if (!count) return null
+  return (
+    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-[#c5a059] text-white">
+      💬 {count}
+    </span>
+  )
+}
+
+export default function OrderTable({ orders, loading, onEdit, commentCounts = {} }) {
   return (
     <div className="space-y-4">
       {/* Desktop header - Note: garde le header ici, il sera répété par groupe pour un look cohérent */}
@@ -73,7 +82,8 @@ export default function OrderTable({ orders, loading, onEdit }) {
                   </div>
                   <div className="col-span-2 text-sm font-medium text-stone-800 truncate">{order.client_name ?? '—'}</div>
                   <div className="col-span-2 text-sm text-stone-600 truncate">{order.supplier_name ?? '—'}</div>
-                  <div className="col-span-4 text-xs text-stone-500 line-clamp-2">{order.transcription ?? '—'}</div>
+                  <div className="col-span-3 text-xs text-stone-500 line-clamp-2">{order.transcription ?? '—'}</div>
+                  <div className="col-span-1"><MessageBadge count={commentCounts[order.id]} /></div>
                   <div className="col-span-2"><StatusBadge status={order.status} /></div>
                 </div>
                 {/* Mobile card */}
@@ -86,8 +96,9 @@ export default function OrderTable({ orders, loading, onEdit }) {
                     <p className="text-xs text-stone-400 line-clamp-1">{order.supplier_name ?? ''}</p>
                     <p className="text-xs text-stone-400 mt-0.5">{formatDate(order.created_at)}</p>
                   </div>
-                  <div className="flex-shrink-0">
+                  <div className="flex-shrink-0 flex flex-col items-end gap-1">
                     <StatusBadge status={order.status} />
+                    <MessageBadge count={commentCounts[order.id]} />
                   </div>
                 </div>
               </div>
