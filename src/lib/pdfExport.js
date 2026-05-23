@@ -3,13 +3,13 @@ import { TYPE_LABELS } from './constants.js'
 
 // ── Company info — update with real values ────────────────────────────────
 const COMPANY = {
-  name: 'GRÜN FALCOT & CO',
-  address: '12 rue des Vignerons',
-  city: '69001 Lyon',
-  siret: '123 456 789 00012',
-  tva: 'FR 12 123456789',
-  tel: '+33 4 XX XX XX XX',
-  email: 'contact@grunfalcot.fr',
+  name:    'GRÜN FALCOT & CO',
+  address: '19 All. Chante-Vent',
+  city:    '69370 Saint-Didier-au-Mont-d\'Or',
+  siret:   '530 290 725 00015',
+  tva:     'FR 19 530290725',
+  tel:     '06 47 05 89 12',
+  email:   'contact@grunfalcot.fr',
 }
 
 const C = {
