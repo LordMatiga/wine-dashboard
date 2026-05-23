@@ -59,7 +59,7 @@ export default function VoiceInput() {
       recorderRef.current = recorder
       setMode('recording')
     } catch {
-      setErrorMsg("Accès au microphone refusé. Autorise-le dans les réglages du navigateur.")
+      setErrorMsg('mic_denied')
       setMode('error')
     }
   }
@@ -269,7 +269,50 @@ export default function VoiceInput() {
               {/* Error */}
               {mode === 'error' && (
                 <div className="space-y-3">
-                  <p className="text-sm text-red-600 bg-red-50 rounded-xl px-4 py-3">{errorMsg}</p>
+                  {errorMsg === 'mic_denied' ? (
+                    <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 space-y-3">
+                      <div className="flex items-center gap-2">
+                        <span className="text-lg">🎙️</span>
+                        <p className="text-sm font-semibold text-amber-800">Accès au microphone refusé</p>
+                      </div>
+                      {/iPhone|iPad|iPod/.test(navigator.userAgent) ? (
+                        /CriOS/.test(navigator.userAgent) ? (
+                          <div className="text-xs text-amber-700 space-y-1">
+                            <p className="font-medium">Sur Chrome iPhone :</p>
+                            <ol className="list-decimal list-inside space-y-1">
+                              <li>Ouvre l'app <strong>Réglages</strong> iPhone</li>
+                              <li>Descends jusqu'à <strong>Chrome</strong></li>
+                              <li>Active <strong>Microphone</strong></li>
+                              <li>Reviens ici et réessaie</li>
+                            </ol>
+                          </div>
+                        ) : (
+                          <div className="text-xs text-amber-700 space-y-1">
+                            <p className="font-medium">Sur Safari iPhone :</p>
+                            <ol className="list-decimal list-inside space-y-1">
+                              <li>Ouvre l'app <strong>Réglages</strong> iPhone</li>
+                              <li>Descends jusqu'à <strong>Safari</strong></li>
+                              <li>Appuie sur <strong>Microphone</strong></li>
+                              <li>Sélectionne <strong>Autoriser</strong></li>
+                              <li>Reviens ici et réessaie</li>
+                            </ol>
+                          </div>
+                        )
+                      ) : (
+                        <div className="text-xs text-amber-700 space-y-1">
+                          <p className="font-medium">Dans ton navigateur :</p>
+                          <ol className="list-decimal list-inside space-y-1">
+                            <li>Clique sur l'icône 🔒 dans la barre d'adresse</li>
+                            <li>Trouve <strong>Microphone</strong></li>
+                            <li>Change en <strong>Autoriser</strong></li>
+                            <li>Recharge la page et réessaie</li>
+                          </ol>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-red-600 bg-red-50 rounded-xl px-4 py-3">{errorMsg}</p>
+                  )}
                   <button
                     onClick={reset}
                     className="w-full px-4 py-2.5 rounded-xl border border-stone-200 text-stone-600 text-sm font-medium hover:bg-stone-100 transition-colors"
