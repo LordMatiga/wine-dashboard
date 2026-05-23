@@ -59,7 +59,7 @@ export default function EditModal({ order, onSave, onDelete, onClose }) {
       .select('filename, mime_type, created_at')
       .eq('order_id', order.id)
       .order('created_at', { ascending: false })
-    generatePDF({ ...order, _source: 'order' }, docs ?? [])
+    await generatePDF({ ...order, _source: 'order' }, docs ?? [])
     setPdfLoading(false)
   }
 

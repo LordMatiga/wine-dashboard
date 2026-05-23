@@ -26,6 +26,17 @@ const setFill      = (doc, rgb) => doc.setFillColor(...rgb)
 const setDraw      = (doc, rgb) => doc.setDrawColor(...rgb)
 const setTextColor = (doc, rgb) => doc.setTextColor(...rgb)
 
+async function loadBase64(url) {
+  const res = await fetch(url)
+  const blob = await res.blob()
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onloadend = () => resolve(reader.result)
+    reader.onerror = reject
+    reader.readAsDataURL(blob)
+  })
+}
+
 function formatDate(dateStr) {
   if (!dateStr) return '—'
   return new Date(dateStr).toLocaleDateString('fr-FR', {
@@ -62,7 +73,8 @@ function sectionHeader(doc, label, y, margin, W) {
   return y + 7
 }
 
-export function generatePDF(item, docs = []) {
+export async function generatePDF(item, docs = []) {
+  const logoData = await loadBase64('/logo-grunfalcot.png').catch(() => null)
   const isOrder = item._source === 'order'
   const doc = new jsPDF({ unit: 'mm', format: 'a4' })
   const W = 210
@@ -74,10 +86,17 @@ export function generatePDF(item, docs = []) {
   setFill(doc, C.navy)
   doc.rect(0, 0, W, 36, 'F')
 
-  doc.setFont('helvetica', 'bold')
-  doc.setFontSize(15)
-  setTextColor(doc, C.white)
-  doc.text(COMPANY.name, margin, 15)
+  if (logoData) {
+    // 660×100 ratio → at 50mm wide: 7.57mm tall; centre vertically in 36mm band
+    const logoW = 50
+    const logoH = logoW * (100 / 660)
+    doc.addImage(logoData, 'PNG', margin, (36 - logoH) / 2, logoW, logoH)
+  } else {
+    doc.setFont('helvetica', 'bold')
+    doc.setFontSize(15)
+    setTextColor(doc, C.white)
+    doc.text(COMPANY.name, margin, 15)
+  }
 
   const docLabel = isOrder
     ? 'BON DE COMMANDE'

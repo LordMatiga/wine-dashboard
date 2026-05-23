@@ -69,7 +69,7 @@ export default function EditTaskModal({ task, onSave, onDelete, onClose }) {
       .select('filename, mime_type, created_at')
       .eq('task_id', task.id)
       .order('created_at', { ascending: false })
-    generatePDF({ ...task, _source: 'task' }, docs ?? [])
+    await generatePDF({ ...task, _source: 'task' }, docs ?? [])
     setPdfLoading(false)
   }
 
