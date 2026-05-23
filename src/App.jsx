@@ -190,8 +190,7 @@ export default function App() {
         />
 
         {activeTab === 'tout' && (
-          <div className="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
-            <AllFeedPanel
+          <AllFeedPanel
               onSelectOrder={setEditingOrder}
               onSelectTask={setEditingTask}
               search={search}
@@ -201,7 +200,6 @@ export default function App() {
               dateTo={dateTo}
               commentCounts={commentCounts}
             />
-          </div>
         )}
 
         {activeTab === 'commandes' && (
