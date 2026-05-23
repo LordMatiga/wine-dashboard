@@ -23,7 +23,6 @@ export async function subscribeToPush(userLabel) {
 }
 
 export async function sendPushNotification(status, client_name, type = 'commande') {
-  return // notifications temporairement désactivées
   const res = await fetch('https://ydrlwtmgvgbbgbminydv.supabase.co/functions/v1/send-push', {
     method: 'POST',
     headers: {

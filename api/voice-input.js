@@ -169,8 +169,11 @@ export default async function handler(req, res) {
         const ordersData = await insertRes.json()
         createdId = Array.isArray(ordersData) ? (ordersData[0]?.id ?? null) : null
         createdTable = 'orders'
-        // notifications temporairement désactivées
-        // fetch(`${SUPABASE_URL}/functions/v1/send-push`, { ... }).catch(() => {})
+        fetch(`${SUPABASE_URL}/functions/v1/send-push`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}` },
+          body: JSON.stringify({ status: 'Entrante', client_name: result.client, type: 'commande' }),
+        }).catch(() => {})
       } else {
         const insertRes = await fetch(`${SUPABASE_URL}/rest/v1/tasks`, {
           method: 'POST',
@@ -188,7 +191,11 @@ export default async function handler(req, res) {
         const tasksData = await insertRes.json()
         createdId = Array.isArray(tasksData) ? (tasksData[0]?.id ?? null) : null
         createdTable = 'tasks'
-      }
+        fetch(`${SUPABASE_URL}/functions/v1/send-push`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}` },
+          body: JSON.stringify({ status: 'Entrante', client_name: result.client, type: result.type }),
+        }).catch(() => {})
 
       items.push({
         type: result.type,
