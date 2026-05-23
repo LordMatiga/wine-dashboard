@@ -1,22 +1,26 @@
 import { useState, useRef } from 'react'
 import DocumentUpload from './DocumentUpload.jsx'
 import { TYPE_LABELS } from '../lib/constants.js'
+import { supabase } from '../lib/supabase.js'
 
 export default function VoiceInput() {
   const [open, setOpen] = useState(false)
-  const [mode, setMode] = useState('idle') // idle | recording | processing | done | error
+  const [mode, setMode] = useState('idle') // idle | recording | processing | done | error | doc_done
   const [text, setText] = useState('')
   const [result, setResult] = useState(null)
   const [errorMsg, setErrorMsg] = useState('')
+  const [uploadedDoc, setUploadedDoc] = useState(null)
   const recorderRef = useRef(null)
   const chunksRef = useRef([])
   const mimeTypeRef = useRef('')
+  const fileInputRef = useRef(null)
 
   function reset() {
     setMode('idle')
     setText('')
     setResult(null)
     setErrorMsg('')
+    setUploadedDoc(null)
   }
 
   function close() {
@@ -164,13 +168,50 @@ export default function VoiceInput() {
                       </svg>
                       Vocal
                     </button>
-                    <button
-                      onClick={submitText}
-                      disabled={!text.trim()}
-                      className="w-full px-4 py-3 rounded-xl bg-[#2d4a6b] text-white text-sm font-medium hover:bg-[#1e3349] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-                    >
-                      Envoyer
-                    </button>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => fileInputRef.current?.click()}
+                        className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-stone-100 text-stone-700 text-sm font-medium border border-stone-200 hover:bg-stone-200 transition-colors"
+                      >
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
+                        </svg>
+                        Document
+                      </button>
+                      <button
+                        onClick={submitText}
+                        disabled={!text.trim()}
+                        className="flex-1 px-4 py-3 rounded-xl bg-[#2d4a6b] text-white text-sm font-medium hover:bg-[#1e3349] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                      >
+                        Envoyer
+                      </button>
+                    </div>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      className="hidden"
+                      accept="image/*,.pdf,.doc,.docx,.xls,.xlsx"
+                      onChange={async e => {
+                        const file = e.target.files?.[0]
+                        if (!file) return
+                        setMode('processing')
+                        try {
+                          const ext = file.name.split('.').pop()
+                          const uid = `${Date.now()}_${Math.random().toString(36).slice(2)}`
+                          const path = `unlinked/${uid}.${ext}`
+                          const { error: se } = await supabase.storage.from('documents').upload(path, file, { contentType: file.type })
+                          if (se) throw se
+                          const { error: de } = await supabase.from('documents').insert({ filename: file.name, storage_path: path, mime_type: file.type })
+                          if (de) throw de
+                          setUploadedDoc(file.name)
+                          setMode('doc_done')
+                        } catch (err) {
+                          setErrorMsg(err.message)
+                          setMode('error')
+                        }
+                        e.target.value = ''
+                      }}
+                    />
                   </div>
                 </div>
               )}
@@ -253,6 +294,30 @@ export default function VoiceInput() {
                     onClick={reset}
                     className="w-full px-4 py-2.5 rounded-xl bg-[#2d4a6b] text-white text-sm font-medium hover:bg-[#1e3349] transition-colors"
                   >
+                    Nouvelle saisie
+                  </button>
+                </div>
+              )}
+
+              {/* Doc done */}
+              {mode === 'doc_done' && (
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                      <svg className="w-4 h-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                      </svg>
+                    </div>
+                    <span className="text-sm font-semibold text-stone-800">Document enregistré</span>
+                  </div>
+                  <div className="bg-stone-100 rounded-xl px-4 py-3 flex items-center gap-2">
+                    <svg className="w-4 h-4 text-stone-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                    </svg>
+                    <span className="text-sm text-stone-700 truncate">{uploadedDoc}</span>
+                  </div>
+                  <p className="text-xs text-stone-400 text-center">Visible dans l'onglet Documents</p>
+                  <button onClick={reset} className="w-full px-4 py-2.5 rounded-xl bg-[#2d4a6b] text-white text-sm font-medium hover:bg-[#1e3349] transition-colors">
                     Nouvelle saisie
                   </button>
                 </div>
