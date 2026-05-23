@@ -1,34 +1,8 @@
 import { useState, useEffect, useMemo } from 'react'
 import { supabase } from '../lib/supabase.js'
+import { formatDate, groupByDay } from '../lib/utils.js'
+import { TYPE_LABELS } from '../lib/constants.js'
 import StatusBadge from './StatusBadge.jsx'
-
-const TYPE_LABELS = {
-  fiche_client: 'Fiche client',
-  logistique: 'Logistique',
-  compta: 'Compta',
-  tarif: 'Tarif',
-  autre: 'Autre',
-}
-
-function formatDate(dateStr) {
-  if (!dateStr) return '—'
-  return new Date(dateStr).toLocaleString('fr-FR', {
-    day: '2-digit', month: '2-digit', year: 'numeric',
-    hour: '2-digit', minute: '2-digit',
-  })
-}
-
-function groupByDay(items) {
-  const groups = {}
-  items.forEach(item => {
-    const key = new Date(item.created_at).toLocaleDateString('fr-FR', {
-      weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
-    })
-    if (!groups[key]) groups[key] = []
-    groups[key].push(item)
-  })
-  return groups
-}
 
 export default function UrgentPanel({ onSelectOrder, onSelectTask, search = '', statusFilter = 'Tous', typeFilter = 'Tous', dateFrom = '', dateTo = '' }) {
   const [items, setItems] = useState([])

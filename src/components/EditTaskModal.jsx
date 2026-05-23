@@ -3,6 +3,7 @@ import AutocompleteInput from './AutocompleteInput.jsx'
 import DocumentsList from './DocumentsList.jsx'
 import DocumentUpload from './DocumentUpload.jsx'
 import ChatThread from './ChatThread.jsx'
+import { STATUSES, STATUS_ACTIVE } from '../lib/constants.js'
 
 const TASK_TYPES = [
   { value: 'fiche_client', label: 'Fiche client' },
@@ -11,14 +12,6 @@ const TASK_TYPES = [
   { value: 'tarif',        label: 'Tarif' },
   { value: 'autre',        label: 'Autre' },
 ]
-
-const STATUSES = ['Entrante', 'À traiter', 'Traitée']
-
-const STATUS_ACTIVE = {
-  'Entrante': 'bg-blue-50 text-blue-800 border-blue-300',
-  'À traiter': 'bg-amber-50 text-amber-800 border-amber-300',
-  'Traitée': 'bg-emerald-50 text-emerald-800 border-emerald-300',
-}
 
 export default function EditTaskModal({ task, onSave, onDelete, onClose }) {
   const [form, setForm] = useState({

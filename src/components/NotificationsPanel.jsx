@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { supabase } from '../lib/supabase.js'
+import { formatDate } from '../lib/utils.js'
 import StatusBadge from './StatusBadge.jsx'
 
 const STORAGE_KEY = 'dismissed_notification_ids'
@@ -11,14 +12,6 @@ function getDismissed() {
 
 function saveDismissed(set) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify([...set]))
-}
-
-function formatDate(dateStr) {
-  if (!dateStr) return '—'
-  return new Date(dateStr).toLocaleString('fr-FR', {
-    day: '2-digit', month: '2-digit', year: 'numeric',
-    hour: '2-digit', minute: '2-digit',
-  })
 }
 
 export default function NotificationsPanel({ onSelectOrder, onDelete, search = '', statusFilter = 'Tous', dateFrom = '', dateTo = '' }) {

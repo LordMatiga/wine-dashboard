@@ -1,19 +1,12 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase.js'
+import { formatDate } from '../lib/utils.js'
 
 const FIELD_LABELS = {
   client_name: 'Client',
   supplier_name: 'Fournisseur',
   transcription: 'Retranscription',
   status: 'Statut',
-}
-
-function formatDate(dateStr) {
-  if (!dateStr) return '—'
-  return new Date(dateStr).toLocaleString('fr-FR', {
-    day: '2-digit', month: '2-digit', year: 'numeric',
-    hour: '2-digit', minute: '2-digit',
-  })
 }
 
 export default function OrderHistory({ orderId }) {
@@ -58,17 +51,11 @@ export default function OrderHistory({ orderId }) {
           <p className="text-xs text-stone-400 mb-1.5">{formatDate(entry.created_at)}</p>
           <div className="space-y-1">
             {Object.entries(entry.changes).map(([field, value]) => {
-              const labels = {
-                client_name: 'Client',
-                supplier_name: 'Fournisseur',
-                transcription: 'Retranscription',
-                status: 'Statut'
-              }
               const avant = value['before'] ?? '—'
               const apres = value['after'] ?? '—'
               return (
                 <div key={field} className="text-sm mt-1">
-                  <span className="font-medium text-stone-600">{labels[field] || field} : </span>
+                  <span className="font-medium text-stone-600">{FIELD_LABELS[field] || field} : </span>
                   <span className="line-through text-stone-400">{avant}</span>
                   <span className="text-stone-400 mx-1">→</span>
                   <span className="text-stone-800">{apres}</span>

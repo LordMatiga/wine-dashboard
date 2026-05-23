@@ -1,14 +1,6 @@
 import { useState, useRef } from 'react'
 import DocumentUpload from './DocumentUpload.jsx'
-
-const TYPE_LABELS = {
-  commande: 'Commande',
-  fiche_client: 'Fiche client',
-  logistique: 'Logistique',
-  compta: 'Compta',
-  tarif: 'Tarif',
-  autre: 'Autre',
-}
+import { TYPE_LABELS } from '../lib/constants.js'
 
 export default function VoiceInput() {
   const [open, setOpen] = useState(false)

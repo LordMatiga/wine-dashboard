@@ -1,43 +1,9 @@
 import { useState, useEffect, useMemo } from 'react'
 import { supabase } from '../lib/supabase.js'
+import { formatDate, groupByDay } from '../lib/utils.js'
+import { TYPE_STYLES } from '../lib/constants.js'
 import StatusBadge from './StatusBadge.jsx'
-
-const TYPE_STYLES = {
-  fiche_client: { wrapper: 'bg-purple-50 text-purple-800 border border-purple-200', label: 'Fiche client' },
-  logistique:   { wrapper: 'bg-orange-50 text-orange-800 border border-orange-200', label: 'Logistique' },
-  compta:       { wrapper: 'bg-blue-50 text-blue-800 border border-blue-200',       label: 'Compta' },
-  tarif:        { wrapper: 'bg-teal-50 text-teal-800 border border-teal-200',       label: 'Tarif' },
-  autre:        { wrapper: 'bg-stone-100 text-stone-600 border border-stone-200',      label: 'Autre' },
-}
-
-function formatDate(dateStr) {
-  if (!dateStr) return '—'
-  return new Date(dateStr).toLocaleString('fr-FR', {
-    day: '2-digit', month: '2-digit', year: 'numeric',
-    hour: '2-digit', minute: '2-digit',
-  })
-}
-
-function groupByDay(items) {
-  const groups = {}
-  items.forEach(item => {
-    const key = new Date(item.created_at).toLocaleDateString('fr-FR', {
-      weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
-    })
-    if (!groups[key]) groups[key] = []
-    groups[key].push(item)
-  })
-  return groups
-}
-
-function MessageBadge({ count }) {
-  if (!count) return null
-  return (
-    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#c5a059]/10 text-[#c5a059] border border-[#c5a059]/30">
-      💬 {count}
-    </span>
-  )
-}
+import MessageBadge from './MessageBadge.jsx'
 
 export default function AllFeedPanel({ onSelectOrder, onSelectTask, search = '', statusFilter = 'Tous', typeFilter = 'Tous', dateFrom = '', dateTo = '', commentCounts = {} }) {
   const [items, setItems] = useState([])

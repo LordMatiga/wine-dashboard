@@ -1,61 +1,16 @@
 import { useState, useEffect, useMemo } from 'react'
 import { supabase } from '../lib/supabase.js'
+import { formatDate, groupByDay } from '../lib/utils.js'
+import { TYPE_STYLES } from '../lib/constants.js'
 import StatusBadge from './StatusBadge.jsx'
-
-function groupByDay(items) {
-  const groups = {}
-  items.forEach(item => {
-    const key = new Date(item.created_at).toLocaleDateString('fr-FR', {
-      weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
-    })
-    if (!groups[key]) groups[key] = []
-    groups[key].push(item)
-  })
-  return groups
-}
-
-const TYPE_STYLES = {
-  fiche_client: { wrapper: 'bg-purple-50 text-purple-800 border border-purple-200', label: 'Fiche client' },
-  logistique:   { wrapper: 'bg-orange-50 text-orange-800 border border-orange-200', label: 'Logistique' },
-  compta:       { wrapper: 'bg-blue-50 text-blue-800 border border-blue-200',   label: 'Compta' },
-  tarif:        { wrapper: 'bg-teal-50 text-teal-800 border border-teal-200',   label: 'Tarif' },
-  autre:        { wrapper: 'bg-stone-100 text-stone-600 border border-stone-200',  label: 'Autre' },
-}
+import MessageBadge from './MessageBadge.jsx'
+import SkeletonRow from './SkeletonRow.jsx'
 
 function TypeBadge({ type }) {
   const style = TYPE_STYLES[type] ?? TYPE_STYLES.autre
   return (
     <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${style.wrapper}`}>
       {style.label}
-    </span>
-  )
-}
-
-function formatDate(dateStr) {
-  if (!dateStr) return '—'
-  return new Date(dateStr).toLocaleString('fr-FR', {
-    day: '2-digit', month: '2-digit', year: 'numeric',
-    hour: '2-digit', minute: '2-digit',
-  })
-}
-
-function SkeletonRow() {
-  return (
-    <div className="px-4 py-3 border-b border-stone-200">
-      <div className="animate-pulse flex gap-3">
-        <div className="h-4 bg-stone-200 rounded w-24" />
-        <div className="h-4 bg-stone-200 rounded w-32 flex-1" />
-        <div className="h-4 bg-stone-200 rounded w-20" />
-      </div>
-    </div>
-  )
-}
-
-function MessageBadge({ count }) {
-  if (!count) return null
-  return (
-    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#c5a059]/10 text-[#c5a059] border border-[#c5a059]/30">
-      💬 {count}
     </span>
   )
 }
@@ -114,7 +69,6 @@ export default function TaskTable({ onEdit, onNew, typeFilter = 'Tous', commentC
             <div className="px-4 py-2 bg-stone-50 border-b border-stone-200">
               <p className="text-xs font-medium text-stone-500 capitalize">{day}</p>
             </div>
-            {/* Desktop header pour chaque groupe */}
             <div className="hidden sm:grid grid-cols-12 gap-2 px-4 py-2 bg-stone-50/50 border-b border-stone-100 text-xs font-semibold text-stone-400 uppercase tracking-wide">
               <div className="col-span-2">Date</div>
               <div className="col-span-1">Type</div>
@@ -122,7 +76,7 @@ export default function TaskTable({ onEdit, onNew, typeFilter = 'Tous', commentC
               <div className="col-span-2">Fournisseur</div>
               <div className="col-span-3">Description</div>
               <div className="col-span-1">Statut</div>
-              <div className="col-span-1">Urgent</div>
+              <div className="col-span-1"></div>
             </div>
             {dayTasks.map(task => (
               <div
@@ -140,7 +94,6 @@ export default function TaskTable({ onEdit, onNew, typeFilter = 'Tous', commentC
                   <div className="col-span-2 text-sm text-stone-600 truncate">{task.supplier_name ?? '—'}</div>
                   <div className="col-span-3 text-xs text-stone-500 line-clamp-2">{task.description ?? '—'}</div>
                   <div className="col-span-1"><StatusBadge status={task.status} /></div>
-                  <div className="col-span-1 text-base">{task.urgent ? '🔴' : ''}</div>
                   <div className="col-span-1"><MessageBadge count={commentCounts[task.id]} /></div>
                 </div>
                 <div className="sm:hidden flex items-center gap-3 px-4 py-3">

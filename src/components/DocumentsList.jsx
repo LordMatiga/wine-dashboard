@@ -1,14 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase.js'
-
-function getPublicUrl(path) {
-  const { data } = supabase.storage.from('documents').getPublicUrl(path)
-  return data.publicUrl
-}
-
-function isImage(mime) {
-  return mime?.startsWith('image/')
-}
+import { getPublicUrl, isImage } from '../lib/utils.js'
 
 export default function DocumentsList({ orderId, taskId, refreshKey }) {
   const [docs, setDocs] = useState([])

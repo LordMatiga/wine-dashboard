@@ -1,31 +1,8 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase.js'
+import { formatDate, getPublicUrl, isImage } from '../lib/utils.js'
+import { TYPE_LABELS } from '../lib/constants.js'
 import DocumentUpload from './DocumentUpload.jsx'
-
-function getPublicUrl(path) {
-  const { data } = supabase.storage.from('documents').getPublicUrl(path)
-  return data.publicUrl
-}
-
-function isImage(mime) {
-  return mime?.startsWith('image/')
-}
-
-function formatDate(str) {
-  return new Date(str).toLocaleDateString('fr-FR', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  })
-}
-
-const TYPE_LABELS = {
-  fiche_client: 'Fiche client',
-  logistique: 'Logistique',
-  compta: 'Compta',
-  tarif: 'Tarif',
-  autre: 'Autre',
-}
 
 export default function DocumentsPanel({ onSelectOrder, onSelectTask }) {
   const [docs, setDocs] = useState([])
