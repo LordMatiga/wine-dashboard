@@ -60,10 +60,20 @@ async function splitIntents(text) {
       messages: [
         {
           role: 'system',
-          content: `Tu analyses un message professionnel pour détecter s'il contient plusieurs demandes distinctes et indépendantes.
-Une demande distincte = une action qui peut être traitée séparément (passer une commande, préparer une fiche client, signaler un problème logistique, envoyer une facture, etc.).
-Si le message contient UNE SEULE demande : {"segments":["<texte complet>"]}
-Si le message contient PLUSIEURS demandes distinctes, découpe en segments autonomes (chaque segment doit être compréhensible seul) : {"segments":["demande 1 avec contexte","demande 2 avec contexte"]}
+          content: `Tu analyses un message professionnel pour détecter s'il contient plusieurs demandes DISTINCTES de TYPES DIFFÉRENTS.
+
+RÈGLE ABSOLUE : Une commande avec plusieurs produits, cuvées ou quantités = UN SEUL segment. Ne jamais découper une liste de produits.
+Exemples qui sont UN seul segment :
+- "commande 12 Eygat 12 Sabarottz Courbis pour client X" → 1 segment
+- "12 caisses X, 6 Y, fournisseur Z" → 1 segment
+- un message avec plusieurs lignes de quantités → 1 segment
+
+Exemples qui sont PLUSIEURS segments (actions de types vraiment différents) :
+- "commande X pour client A, et prépare une fiche pour client B" → 2 segments
+- "commander Y et au fait la facture de Z est perdue" → 2 segments
+
+Si UNE SEULE demande (ou une commande multi-produits) : {"segments":["<texte complet>"]}
+Si PLUSIEURS demandes de types différents : {"segments":["demande 1","demande 2"]}
 Réponds uniquement en JSON PUR.`,
         },
         { role: 'user', content: text },
