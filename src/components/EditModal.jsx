@@ -6,6 +6,7 @@ import DocumentUpload from './DocumentUpload.jsx'
 import ChatThread from './ChatThread.jsx'
 import { STATUSES, STATUS_ACTIVE } from '../lib/constants.js'
 import { generatePDF } from '../lib/pdfExport.js'
+import { supabase } from '../lib/supabase.js'
 
 export default function EditModal({ order, onSave, onDelete, onClose }) {
   const [form, setForm] = useState({
@@ -16,6 +17,7 @@ export default function EditModal({ order, onSave, onDelete, onClose }) {
     status: order.status ?? 'Entrante',
   })
   const [saving, setSaving] = useState(false)
+  const [pdfLoading, setPdfLoading] = useState(false)
   const [showHistory, setShowHistory] = useState(false)
   const [showRaw, setShowRaw] = useState(false)
   const [resetStatus, setResetStatus] = useState(true)
@@ -32,6 +34,17 @@ export default function EditModal({ order, onSave, onDelete, onClose }) {
       setUserModified(true)
       setForm(f => ({ ...f, status: 'À traiter' }))
     }
+  }
+
+  async function handleDownloadPDF() {
+    setPdfLoading(true)
+    const { data: docs } = await supabase
+      .from('documents')
+      .select('filename, mime_type, created_at')
+      .eq('order_id', order.id)
+      .order('created_at', { ascending: false })
+    generatePDF({ ...order, _source: 'order' }, docs ?? [])
+    setPdfLoading(false)
   }
 
   async function handleSave() {
@@ -62,13 +75,15 @@ export default function EditModal({ order, onSave, onDelete, onClose }) {
           </div>
           <div className="flex items-center gap-3">
             <button
-              onClick={() => generatePDF({ ...order, _source: 'order' })}
-              className="text-xs text-stone-500 hover:text-stone-800 flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-stone-100 transition-colors border border-stone-200"
+              onClick={handleDownloadPDF}
+              disabled={pdfLoading}
+              className="text-xs text-stone-500 hover:text-stone-800 flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-stone-100 transition-colors border border-stone-200 disabled:opacity-50"
               title="Télécharger le récapitulatif PDF"
             >
-              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
-              </svg>
+              {pdfLoading
+                ? <span className="w-3.5 h-3.5 border border-stone-400 border-t-transparent rounded-full animate-spin inline-block" />
+                : <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
+              }
               PDF
             </button>
             <button
