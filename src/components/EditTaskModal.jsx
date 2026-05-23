@@ -3,6 +3,7 @@ import AutocompleteInput from './AutocompleteInput.jsx'
 import DocumentsList from './DocumentsList.jsx'
 import DocumentUpload from './DocumentUpload.jsx'
 import ChatThread from './ChatThread.jsx'
+import OrderHistory from './OrderHistory.jsx'
 import { STATUSES, STATUS_ACTIVE } from '../lib/constants.js'
 import { generatePDF } from '../lib/pdfExport.js'
 import { supabase } from '../lib/supabase.js'
@@ -35,9 +36,10 @@ export default function EditTaskModal({ task, onSave, onDelete, onClose }) {
 
   const isNew = !task.id
   const TABS = isNew ? [] : [
-    { id: 'fiche',     label: 'Fiche' },
-    { id: 'documents', label: 'Documents' },
-    { id: 'messages',  label: 'Messages' },
+    { id: 'fiche',      label: 'Fiche' },
+    { id: 'documents',  label: 'Documents' },
+    { id: 'messages',   label: 'Messages' },
+    { id: 'historique', label: 'Historique' },
   ]
 
   function set(key, value) { setForm(prev => ({ ...prev, [key]: value })) }
@@ -250,6 +252,12 @@ export default function EditTaskModal({ task, onSave, onDelete, onClose }) {
 
             {!isNew && activeTab === 'messages' && (
               <ChatThread taskId={task.id} />
+            )}
+
+            {!isNew && activeTab === 'historique' && (
+              <div className="px-4 py-4">
+                <OrderHistory taskId={task.id} />
+              </div>
             )}
           </div>
 

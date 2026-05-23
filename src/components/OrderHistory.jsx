@@ -3,23 +3,30 @@ import { supabase } from '../lib/supabase.js'
 import { formatDate } from '../lib/utils.js'
 
 const FIELD_LABELS = {
-  client_name: 'Client',
+  client_name:   'Client',
   supplier_name: 'Fournisseur',
   transcription: 'Retranscription',
-  status: 'Statut',
+  description:   'Description',
+  status:        'Statut',
+  type:          'Type',
+  urgent:        'Urgent',
 }
 
-export default function OrderHistory({ orderId }) {
+export default function OrderHistory({ orderId, taskId }) {
   const [history, setHistory] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
   useEffect(() => {
     const loadHistory = async () => {
+      const table  = taskId  ? 'task_history'  : 'order_history'
+      const column = taskId  ? 'task_id'        : 'order_id'
+      const id     = taskId  ?? orderId
+
       const { data, error } = await supabase
-        .from('order_history')
+        .from(table)
         .select('*')
-        .eq('order_id', orderId)
+        .eq(column, id)
         .order('created_at', { ascending: false })
 
       if (error) {
@@ -30,7 +37,7 @@ export default function OrderHistory({ orderId }) {
       setLoading(false)
     }
     loadHistory()
-  }, [orderId])
+  }, [orderId, taskId])
 
   if (loading) {
     return <p className="text-xs text-stone-400 text-center py-4">Chargement...</p>
