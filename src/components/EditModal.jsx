@@ -69,7 +69,7 @@ export default function EditModal({ order, onSave, onDelete, onClose }) {
         className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/50 backdrop-blur-sm"
         onClick={e => { if (e.target === e.currentTarget) onClose() }}
       >
-        <div className="flex flex-col bg-stone-50 w-full max-h-[90vh] rounded-2xl shadow-xl sm:max-w-lg overflow-hidden">
+        <div className="flex flex-col bg-stone-50 w-full h-[85vh] rounded-2xl shadow-xl sm:max-w-lg overflow-hidden">
 
           {/* ── Header ─────────────────────────────────────────────────── */}
           <div className="flex-shrink-0 flex items-center justify-between px-4 py-3 border-b border-stone-200 bg-stone-50">
