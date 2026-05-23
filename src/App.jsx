@@ -199,6 +199,7 @@ export default function App() {
               typeFilter={typeFilter}
               dateFrom={dateFrom}
               dateTo={dateTo}
+              commentCounts={commentCounts}
             />
           </div>
         )}

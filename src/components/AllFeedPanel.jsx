@@ -30,7 +30,16 @@ function groupByDay(items) {
   return groups
 }
 
-export default function AllFeedPanel({ onSelectOrder, onSelectTask, search = '', statusFilter = 'Tous', typeFilter = 'Tous', dateFrom = '', dateTo = '' }) {
+function MessageBadge({ count }) {
+  if (!count) return null
+  return (
+    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#c5a059]/10 text-[#c5a059] border border-[#c5a059]/30">
+      💬 {count}
+    </span>
+  )
+}
+
+export default function AllFeedPanel({ onSelectOrder, onSelectTask, search = '', statusFilter = 'Tous', typeFilter = 'Tous', dateFrom = '', dateTo = '', commentCounts = {} }) {
   const [items, setItems] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -119,8 +128,9 @@ export default function AllFeedPanel({ onSelectOrder, onSelectTask, search = '',
                   {text && <p className="text-xs text-stone-400 line-clamp-1">{text}</p>}
                   <p className="text-xs text-stone-400 mt-0.5">{formatDate(item.created_at)}</p>
                 </div>
-                <div className="flex-shrink-0">
+                <div className="flex-shrink-0 flex flex-col items-end gap-1">
                   <StatusBadge status={item.status} />
+                  <MessageBadge count={commentCounts[item.id]} />
                 </div>
               </div>
             )
