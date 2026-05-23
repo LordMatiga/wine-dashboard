@@ -9,7 +9,7 @@ const COMPANY = {
   siret:   '530 290 725 00015',
   tva:     'FR 19 530290725',
   tel:     '06 47 05 89 12',
-  email:   'contact@grunfalcot.fr',
+  email:   'adv@grun-falcot.fr',
 }
 
 const C = {
