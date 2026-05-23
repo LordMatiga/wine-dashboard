@@ -5,6 +5,7 @@ import DocumentsList from './DocumentsList.jsx'
 import DocumentUpload from './DocumentUpload.jsx'
 import ChatThread from './ChatThread.jsx'
 import { STATUSES, STATUS_ACTIVE } from '../lib/constants.js'
+import { generatePDF } from '../lib/pdfExport.js'
 
 export default function EditModal({ order, onSave, onDelete, onClose }) {
   const [form, setForm] = useState({
@@ -60,6 +61,16 @@ export default function EditModal({ order, onSave, onDelete, onClose }) {
             <p className="text-xs text-stone-500 font-mono mt-0.5">{order.id?.slice(0, 8)}…</p>
           </div>
           <div className="flex items-center gap-3">
+            <button
+              onClick={() => generatePDF({ ...order, _source: 'order' })}
+              className="text-xs text-stone-500 hover:text-stone-800 flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-stone-100 transition-colors border border-stone-200"
+              title="Télécharger le récapitulatif PDF"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+              </svg>
+              PDF
+            </button>
             <button
               onClick={() => setShowHistory(h => !h)}
               className="text-xs text-stone-500 hover:text-stone-800 underline cursor-pointer bg-transparent border-none p-0"
