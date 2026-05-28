@@ -34,21 +34,21 @@ export default function VoiceInput() {
   async function startRecording() {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-      const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
-        ? 'audio/webm;codecs=opus'
-        : MediaRecorder.isTypeSupported('audio/webm')
-        ? 'audio/webm'
-        : 'audio/mp4'
 
-      mimeTypeRef.current = mimeType
+      const preferred = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/ogg']
+      const supported = preferred.find(t => {
+        try { return MediaRecorder.isTypeSupported(t) } catch { return false }
+      }) ?? ''
+
       chunksRef.current = []
+      const recorder = new MediaRecorder(stream, supported ? { mimeType: supported } : {})
+      mimeTypeRef.current = recorder.mimeType || supported || 'audio/mp4'
 
-      const recorder = new MediaRecorder(stream, { mimeType })
       recorder.ondataavailable = e => { if (e.data.size > 0) chunksRef.current.push(e.data) }
       recorder.onstop = () => {
         stream.getTracks().forEach(t => t.stop())
-        const blob = new Blob(chunksRef.current, { type: mimeType })
-        submitAudio(blob, mimeType)
+        const blob = new Blob(chunksRef.current, { type: mimeTypeRef.current })
+        submitAudio(blob, mimeTypeRef.current)
       }
 
       recorder.start()
