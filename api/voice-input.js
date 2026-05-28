@@ -196,6 +196,7 @@ export default async function handler(req, res) {
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}` },
           body: JSON.stringify({ status: 'Entrante', client_name: result.client, type: result.type }),
         }).catch(() => {})
+      }
 
       items.push({
         type: result.type,
