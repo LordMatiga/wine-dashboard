@@ -35,7 +35,10 @@ export default function VoiceInput() {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
 
-      const preferred = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/ogg']
+      // iOS Safari accepts audio/mp4 via isTypeSupported but crashes on construction —
+      // safest to let it pick its own format with no mimeType option.
+      const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent)
+      const preferred = isIOS ? [] : ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4']
       const supported = preferred.find(t => {
         try { return MediaRecorder.isTypeSupported(t) } catch { return false }
       }) ?? ''

@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "api/voice-input.js": {
+      "maxDuration": 60
+    }
+  }
+}
